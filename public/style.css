@@ -189,57 +189,18 @@ footer { margin-top: 26px; font-size: 12px; color: var(--muted); opacity: .9; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-
-/* ==== Mobile fix v3: nicer "Jeu" column (title + 3-line desc, better width) ==== */
-@media (max-width: 520px){
-  /* Give a bit more space to the "Jeu" column */
-  .games-table thead th:nth-child(2),
-  .games-table tbody td:nth-child(2){
-    width: 50%;
-    min-width: 50%;
-  }
-  /* Reduce the image size a bit to gain room */
-  .games-table td:nth-child(1) img{
-    width: 42px; height: auto;
-  }
-  /* Typography & spacing */
-  .game-title{
-    font-size: 15px;
-    line-height: 1.25;
-    margin: 0 0 2px 0;
-  }
-  .game-desc{
-    font-size: 12.5px;
-    line-height: 1.25;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;         /* clamp to 3 lines */
-    -webkit-box-orient: vertical;
-    max-height: 4.5em;              /* fallback clamp */
-    hyphens: auto;
-    word-break: break-word;
-    text-wrap: pretty;
-  }
-  /* Lightly tighten numeric columns */
-  .games-table thead th:nth-child(3),
-  .games-table tbody td:nth-child(3){ width: 54px; min-width:54px; }
-  .games-table thead th:nth-child(4),
-  .games-table tbody td:nth-child(4){ width: 40px; min-width:40px; }
-  .games-table thead th:nth-child(5),
-  .games-table tbody td:nth-child(5){ width: 48px; min-width:48px; }
-  /* Type badge area wraps cleanly */
-  .games-table thead th:nth-child(6),
-  .games-table tbody td:nth-child(6){ width: 84px; min-width:84px; white-space: normal; }
-  .type-cell, .type-badges{ display:flex; flex-wrap:wrap; gap:6px; }
-  .badge, .tag, .pill{ font-size:11px; padding:2px 6px; line-height:1.2; }
+/* ===== Responsive: horizontal scroll container for table on mobile ===== */
+.table-container{
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-
-/* Ultra small screens */
-@media (max-width: 380px){
-  .games-table thead th:nth-child(2),
-  .games-table tbody td:nth-child(2){ width: 52%; min-width:52%; }
-  .game-title{ font-size: 14px; }
-  .game-desc{ font-size: 12px; -webkit-line-clamp: 2; max-height: 2.6em; }
+.table-container table{
+  min-width: 720px; /* keep all columns readable; user can scroll */
+  border-collapse: collapse;
+}
+.table-container::-webkit-scrollbar{ height: 6px; }
+.table-container::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.2);
+  border-radius: 4px;
 }

@@ -190,65 +190,56 @@ a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 
-/* ==== Mobile fix v2: keep "Jeu" column visible and readable ==== */
+/* ==== Mobile fix v3: nicer "Jeu" column (title + 3-line desc, better width) ==== */
 @media (max-width: 520px){
-  .games-table{ width:100%; table-layout:fixed; }
-  .games-table th, .games-table td{
-    padding: 6px 6px;
-    font-size: 13px;
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: top;
-  }
-  /* Photo */
-  .games-table thead th:nth-child(1),
-  .games-table tbody td:nth-child(1){
-    width: 52px; min-width:52px;
-  }
-  /* JEUX : allow wrapping + give most of width */
+  /* Give a bit more space to the "Jeu" column */
   .games-table thead th:nth-child(2),
   .games-table tbody td:nth-child(2){
-    width: 42%; min-width: 42%;
+    width: 50%;
+    min-width: 50%;
+  }
+  /* Reduce the image size a bit to gain room */
+  .games-table td:nth-child(1) img{
+    width: 42px; height: auto;
+  }
+  /* Typography & spacing */
+  .game-title{
+    font-size: 15px;
+    line-height: 1.25;
+    margin: 0 0 2px 0;
+  }
+  .game-desc{
+    font-size: 12.5px;
+    line-height: 1.25;
     white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;         /* clamp to 3 lines */
+    -webkit-box-orient: vertical;
+    max-height: 4.5em;              /* fallback clamp */
+    hyphens: auto;
+    word-break: break-word;
+    text-wrap: pretty;
   }
-  /* Joueurs */
+  /* Lightly tighten numeric columns */
   .games-table thead th:nth-child(3),
-  .games-table tbody td:nth-child(3){
-    width: 60px; min-width:60px; text-align:center;
-  }
-  /* Âge */
+  .games-table tbody td:nth-child(3){ width: 54px; min-width:54px; }
   .games-table thead th:nth-child(4),
-  .games-table tbody td:nth-child(4){
-    width: 44px; min-width:44px; text-align:center;
-  }
-  /* Durée */
+  .games-table tbody td:nth-child(4){ width: 40px; min-width:40px; }
   .games-table thead th:nth-child(5),
-  .games-table tbody td:nth-child(5){
-    width: 52px; min-width:52px; text-align:center;
-  }
-  /* Type: allow multiple lines of badges */
+  .games-table tbody td:nth-child(5){ width: 48px; min-width:48px; }
+  /* Type badge area wraps cleanly */
   .games-table thead th:nth-child(6),
-  .games-table tbody td:nth-child(6){
-    width: 86px; min-width:86px; white-space: normal;
-  }
+  .games-table tbody td:nth-child(6){ width: 84px; min-width:84px; white-space: normal; }
   .type-cell, .type-badges{ display:flex; flex-wrap:wrap; gap:6px; }
   .badge, .tag, .pill{ font-size:11px; padding:2px 6px; line-height:1.2; }
-  /* images */
-  .games-table td:nth-child(1) img{ width:48px; height:auto; border-radius:10px; }
-  /* title/desc inside "Jeu" */
-  .game-title{ font-size:14px; line-height:1.2; }
-  .game-desc{ font-size:12px; line-height:1.25; }
 }
 
-/* Even smaller phones */
+/* Ultra small screens */
 @media (max-width: 380px){
-  .games-table th, .games-table td{ font-size:12px; padding:5px 5px; }
   .games-table thead th:nth-child(2),
-  .games-table tbody td:nth-child(2){ width: 40%; min-width:40%; }
-  .games-table thead th:nth-child(6),
-  .games-table tbody td:nth-child(6){ width: 80px; min-width:80px; }
+  .games-table tbody td:nth-child(2){ width: 52%; min-width:52%; }
+  .game-title{ font-size: 14px; }
+  .game-desc{ font-size: 12px; -webkit-line-clamp: 2; max-height: 2.6em; }
 }

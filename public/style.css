@@ -189,19 +189,72 @@ footer { margin-top: 26px; font-size: 12px; color: var(--muted); opacity: .9; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ---- Compact trio: Âge min / Joueurs min / Joueurs max on one line ---- */
-.controls-trio{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:nowrap;
+
+/* ===== Mobile table fit: keep last columns inside on small screens ===== */
+@media (max-width: 520px){
+  .table, .table * { box-sizing: border-box; }
+  table.games, .games-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+  .games-table th, .games-table td{
+    padding: 6px 8px;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: nowrap;
+  }
+  .games-table thead th:nth-child(1),
+  .games-table tbody td:nth-child(1){ /* Photo */
+    width: 56px;
+    min-width: 56px;
+  }
+  .games-table thead th:nth-child(3),
+  .games-table tbody td:nth-child(3){ /* Joueurs */
+    width: 64px;
+    min-width: 64px;
+    text-align: center;
+  }
+  .games-table thead th:nth-child(4),
+  .games-table tbody td:nth-child(4){ /* Âge */
+    width: 48px;
+    min-width: 48px;
+    text-align: center;
+  }
+  .games-table thead th:nth-child(5),
+  .games-table tbody td:nth-child(5){ /* Durée */
+    width: 56px;
+    min-width: 56px;
+    text-align: center;
+  }
+  .games-table thead th:nth-child(6),
+  .games-table tbody td:nth-child(6){ /* Type */
+    width: 90px;
+    min-width: 90px;
+    white-space: normal;     /* allow wrapping for tags */
+  }
+  /* Inside the Type cell, let badges wrap and shrink */
+  .type-badges, .type-cell{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .badge, .tag, .pill{
+    font-size: 11px;
+    padding: 2px 6px;
+    line-height: 1.2;
+    max-width: 100%;
+  }
+
+  /* Shrink game title/desc to save width */
+  .game-title{ font-size: 14px; }
+  .game-desc{ font-size: 12px; white-space: normal; }
 }
-.controls-trio .input{
-  max-width:120px;
-  min-width:88px;
-  padding:8px 10px;
-}
-@media (max-width: 640px){
-  .controls-trio{ width:100%; }
-  .controls-trio .input{ flex:1; max-width:unset; }
+
+/* Slightly smaller phones */
+@media (max-width: 380px){
+  .games-table th, .games-table td{ font-size: 12px; padding: 5px 6px; }
+  .games-table thead th:nth-child(6),
+  .games-table tbody td:nth-child(6){ width: 84px; min-width: 84px; }
 }

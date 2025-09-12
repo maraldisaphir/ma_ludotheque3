@@ -19,12 +19,10 @@
       <div class="controls">
         <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…">
         <select id="f-type" class="input" style="max-width:220px"></select>
-<div class="filters-trio">
-  <input id="f-age" class="input" type="number" min="0" placeholder="Âge min">
-  <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min">
-  <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max">
-</div>
-</div>
+        <input id="f-age" class="input" type="number" min="0" placeholder="Âge min">
+        <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min">
+        <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max">
+      </div>
 
       <table class="table">
         <thead>
@@ -46,5 +44,76 @@
     </footer>
   </div>
   <script src="./script.js"></script>
+
+<script>
+(function(){
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+
+  // Helper: find a likely edit container currently visible
+  function findEditContainer(){
+    // common selectors that may exist
+    const candidates = [
+      '.edit-panel', '.edit-modal', '.modal.show', 'dialog[open]', '.drawer.open', '#editModal.show'
+    ];
+    for(const sel of candidates){
+      const el = document.querySelector(sel);
+      if(el && el.offsetParent !== null) return el;
+    }
+    // fallback: last modal/dialog in DOM
+    const dialogs = $all('dialog, .modal, .edit-panel');
+    return dialogs[dialogs.length-1] || document.body;
+  }
+
+  function ensureDeleteInside(card){
+    // find the original delete button associated to this card
+    const origDel = card.querySelector('.btn-delete, button[data-action="delete"]');
+    if(!origDel) return;
+
+    // Wait a tick to let the edit UI open (if any)
+    setTimeout(() => {
+      const container = findEditContainer();
+      if(!container) return;
+      // Prevent duplicates
+      if(container.querySelector('.btn-delete-inside')) return;
+
+      // Create a new in-modal delete button that triggers the original one
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn-delete-inside';
+      delBtn.textContent = 'Supprimer ce jeu';
+      delBtn.addEventListener('click', () => {
+        if(confirm('Confirmer la suppression de ce jeu ?')){
+          origDel.click(); // reuse existing delete handler
+        }
+      });
+
+      // Try to find a good place in the edit UI
+      const target =
+        container.querySelector('.edit-actions, .form-actions, .modal-footer, footer') ||
+        container;
+      target.appendChild(delBtn);
+    }, 50);
+  }
+
+  // Attach handler on all "Modifier" buttons
+  function bind(){
+    $all('.btn-edit, button[data-action="edit"], .action-edit').forEach(btn => {
+      if(btn.__boundMoveDelete) return;
+      btn.__boundMoveDelete = true;
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.game-card, .card') || document;
+        ensureDeleteInside(card);
+      });
+    });
+  }
+
+  // initial + observe DOM for dynamic lists
+  bind();
+  const mo = new MutationObserver(bind);
+  mo.observe(document.body, {childList:true, subtree:true});
+})();
+</script>
+
 </body>
 </html>

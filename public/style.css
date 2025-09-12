@@ -189,47 +189,44 @@ footer { margin-top: 26px; font-size: 12px; color: var(--muted); opacity: .9; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ==== Filters trio: age + players min + players max on one line (PC + mobile) ==== */
-.filters-trio{
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 12px;
-  align-items: center;
+/* ==== Cards: full-width & tidy spacing ==== */
+.cards, .games-list, .manage-list{
+  padding-right: 0;
+}
+.game-card, .card{
   width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
-}
-.filters-trio .input,
-.filters-trio input[type="number"]{
-  flex: 1 1 0;
-  min-width: 0;            /* prevents overflow, lets flex shrink */
-  max-width: 100%;
-  padding: 10px 12px;
-  height: 44px;
-  box-sizing: border-box;
-}
-.filters-trio input::placeholder{
-  opacity: .8;
+  margin-right: 0;
 }
 
-/* Keep it tight but on one row even on small phones */
+/* hide inline delete button; it will appear inside edit modal */
+.card-actions .btn-delete,
+.actions .btn-delete,
+button.btn-delete.inline-delete { display:none !important; }
+
+/* Center title/meta better when actions column disappears */
+.game-header, .card-main{
+  align-items: center;
+}
+.game-title{ display:block; }
+
+/* Make the two action tiles align nicer if still present */
+.card-actions{
+  display:flex;
+  gap:12px;
+}
+
+/* Mobile tightening to use full width */
 @media (max-width: 520px){
-  .filters-trio{ gap: 8px; }
-  .filters-trio .input,
-  .filters-trio input[type="number"]{
-    padding: 8px 10px;
-    height: 42px;
-    font-size: 14px;
-  }
+  .game-card, .card{ border-radius: 18px; }
+  .card-actions{ gap:10px; }
 }
-
-/* Ultra small phones */
-@media (max-width: 360px){
-  .filters-trio{ gap: 6px; }
-  .filters-trio .input,
-  .filters-trio input[type="number"]{
-    padding: 7px 8px;
-    height: 40px;
-    font-size: 13px;
-  }
+/* Style for the delete button inside the edit modal/panel */
+.btn-delete-inside{
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
 }
+.btn-delete-inside:hover{ filter: brightness(0.98); }

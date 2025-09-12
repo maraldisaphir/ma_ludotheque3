@@ -10,6 +10,19 @@
   <div class="container">
     <div class="header">
       <h1>🎲 Ludothèque — Consultation</h1>
+
+<div class="manage-filters">
+  <input id="mf-search" class="input" type="text" placeholder="Rechercher un jeu, un type, une description…">
+  <select id="mf-type" class="input">
+    <option value="">Tous types</option>
+  </select>
+  <div class="controls-trio">
+    <input id="mf-age" class="input" type="number" min="0" placeholder="Âge min">
+    <input id="mf-pmin" class="input" type="number" min="1" placeholder="Joueurs min">
+    <input id="mf-pmax" class="input" type="number" min="1" placeholder="Joueurs max">
+  </div>
+</div>
+
       <div style="display:flex; gap:8px">
         <a class="button ghost" href="./gestion.html">Gérer</a>
       </div>
@@ -50,68 +63,85 @@
   function $(sel, root){ return (root||document).querySelector(sel); }
   function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
 
-  // Helper: find a likely edit container currently visible
-  function findEditContainer(){
-    // common selectors that may exist
-    const candidates = [
-      '.edit-panel', '.edit-modal', '.modal.show', 'dialog[open]', '.drawer.open', '#editModal.show'
-    ];
-    for(const sel of candidates){
-      const el = document.querySelector(sel);
-      if(el && el.offsetParent !== null) return el;
+  const searchInput = $('#mf-search');
+  const typeSelect  = $('#mf-type');
+  const ageInput    = $('#mf-age');
+  const pminInput   = $('#mf-pmin');
+  const pmaxInput   = $('#mf-pmax');
+
+  const cards = $all('.game-card').length ? $all('.game-card') : $all('.card');
+
+  const types = new Set();
+  cards.forEach(card => {
+    $all('.badge, .tag, .pill', card).forEach(b => types.add(b.textContent.trim()));
+  });
+  const sorted = Array.from(types).sort((a,b)=>a.localeCompare(b,'fr'));
+  sorted.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    typeSelect.appendChild(opt);
+  });
+
+  function parseNumbers(text){
+    const mRange = text.match(/(\d+)\s*[–-]\s*(\d+)/);
+    const mSingle = text.match(/(\d+)\s*joueur/);
+    let minP=null, maxP=null;
+    if(mRange){ minP = parseInt(mRange[1],10); maxP = parseInt(mRange[2],10); }
+    else if(mSingle){ minP = maxP = parseInt(mSingle[1],10); }
+    return {minP, maxP};
+  }
+  function parseAge(text){
+    const m = text.match(/(\d+)\s*\+/);
+    return m ? parseInt(m[1],10) : null;
+  }
+
+  function cardText(card){
+    const title = card.querySelector('.game-title, .title, h3, h4, strong')?.textContent || '';
+    const desc  = card.querySelector('.game-desc, .desc, p')?.textContent || '';
+    const badges= Array.from(card.querySelectorAll('.badge, .tag, .pill')).map(b=>b.textContent).join(' ');
+    const meta  = card.textContent || '';
+    return {title, desc, badges, meta};
+  }
+
+  function matches(card){
+    const {title, desc, badges, meta} = cardText(card);
+    const hay = (title + ' ' + desc + ' ' + badges).toLowerCase();
+    const q = (searchInput.value||'').toLowerCase().trim();
+    if(q && !hay.includes(q)) return false;
+
+    const t = typeSelect.value;
+    if(t){
+      const has = Array.from(card.querySelectorAll('.badge, .tag, .pill')).some(b => b.textContent.trim() === t);
+      if(!has) return false;
     }
-    // fallback: last modal/dialog in DOM
-    const dialogs = $all('dialog, .modal, .edit-panel');
-    return dialogs[dialogs.length-1] || document.body;
+
+    const metaLine = card.querySelector('.meta, .game-meta')?.textContent || meta;
+    const {minP, maxP} = parseNumbers(metaLine);
+    const age = parseAge(metaLine);
+
+    const ageMin = parseInt(ageInput.value,10);
+    const pmin   = parseInt(pminInput.value,10);
+    const pmax   = parseInt(pmaxInput.value,10);
+
+    if(!isNaN(ageMin) && age !== null && age < ageMin) return false;
+    if(!isNaN(pmin) && maxP !== null && maxP < pmin) return false;
+    if(!isNaN(pmax) && minP !== null && minP > pmax) return false;
+
+    return true;
   }
 
-  function ensureDeleteInside(card){
-    // find the original delete button associated to this card
-    const origDel = card.querySelector('.btn-delete, button[data-action="delete"]');
-    if(!origDel) return;
-
-    // Wait a tick to let the edit UI open (if any)
-    setTimeout(() => {
-      const container = findEditContainer();
-      if(!container) return;
-      // Prevent duplicates
-      if(container.querySelector('.btn-delete-inside')) return;
-
-      // Create a new in-modal delete button that triggers the original one
-      const delBtn = document.createElement('button');
-      delBtn.type = 'button';
-      delBtn.className = 'btn-delete-inside';
-      delBtn.textContent = 'Supprimer ce jeu';
-      delBtn.addEventListener('click', () => {
-        if(confirm('Confirmer la suppression de ce jeu ?')){
-          origDel.click(); // reuse existing delete handler
-        }
-      });
-
-      // Try to find a good place in the edit UI
-      const target =
-        container.querySelector('.edit-actions, .form-actions, .modal-footer, footer') ||
-        container;
-      target.appendChild(delBtn);
-    }, 50);
-  }
-
-  // Attach handler on all "Modifier" buttons
-  function bind(){
-    $all('.btn-edit, button[data-action="edit"], .action-edit').forEach(btn => {
-      if(btn.__boundMoveDelete) return;
-      btn.__boundMoveDelete = true;
-      btn.addEventListener('click', (e) => {
-        const card = e.target.closest('.game-card, .card') || document;
-        ensureDeleteInside(card);
-      });
+  function applyFilters(){
+    cards.forEach(card => {
+      card.style.display = matches(card) ? '' : 'none';
     });
   }
 
-  // initial + observe DOM for dynamic lists
-  bind();
-  const mo = new MutationObserver(bind);
-  mo.observe(document.body, {childList:true, subtree:true});
+  [searchInput, typeSelect, ageInput, pminInput, pmaxInput].forEach(el=>{
+    if(el) el.addEventListener('input', applyFilters);
+    if(el) el.addEventListener('change', applyFilters);
+  });
+
+  applyFilters();
 })();
 </script>
 

@@ -1,149 +1,204 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ludothèque – Consultation</title>
-  <link rel="stylesheet" href="./style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ludothèque — Consultation & Gestion</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
-<body data-page="consultation">
+<body data-page="single">
   <div class="container">
+    <!-- Header + Tabs -->
     <div class="header">
-      <h1>🎲 Ludothèque — Consultation</h1>
-
-<div class="manage-filters">
-  <input id="mf-search" class="input" type="text" placeholder="Rechercher un jeu, un type, une description…">
-  <select id="mf-type" class="input">
-    <option value="">Tous types</option>
-  </select>
-  <div class="controls-trio">
-    <input id="mf-age" class="input" type="number" min="0" placeholder="Âge min">
-    <input id="mf-pmin" class="input" type="number" min="1" placeholder="Joueurs min">
-    <input id="mf-pmax" class="input" type="number" min="1" placeholder="Joueurs max">
-  </div>
-</div>
-
-      <div style="display:flex; gap:8px">
-        <a class="button ghost" href="./gestion.html">Gérer</a>
-      </div>
+      <h1>🎲 Ludothèque</h1>
+      <nav class="tabs" role="tablist" aria-label="Navigation">
+        <button class="tab is-active" data-tab="consult" role="tab" aria-selected="true">Consulter</button>
+        <button class="tab" data-tab="manage" role="tab" aria-selected="false">Gérer</button>
+      </nav>
     </div>
 
-    <div class="card">
-      <div class="controls">
-        <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…">
-        <select id="f-type" class="input" style="max-width:220px"></select>
-        <input id="f-age" class="input" type="number" min="0" placeholder="Âge min">
-        <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min">
-        <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max">
+    <!-- ====== Onglet CONSULTER ====== -->
+    <section id="tab-consult" class="tab-panel is-active" role="tabpanel" aria-labelledby="consult">
+      <div class="card">
+        <div class="controls">
+          <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…" />
+          <select id="f-type" class="input" style="max-width:220px"></select>
+
+          <div class="filters-trio">
+            <input id="f-age" class="input" type="number" min="0" placeholder="Âge min" />
+            <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min" />
+            <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max" />
+          </div>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Jeu</th>
+              <th>Joueurs</th>
+              <th>Âge</th>
+              <th>Durée</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Jeu</th>
-            <th>Joueurs</th>
-            <th>Âge</th>
-            <th>Durée</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
+      <footer>
+        Mode sombre (glow néon) / clair (pastel). Données chargées automatiquement depuis Netlify Blobs.
+      </footer>
+    </section>
 
-    <footer>
-      Mode sombre (glow néon) / clair (pastel). Données chargées automatiquement depuis Netlify Blobs.
-    </footer>
+    <!-- ====== Onglet GERER ====== -->
+    <section id="tab-manage" class="tab-panel" role="tabpanel" aria-labelledby="manage">
+      <div class="card">
+        <div class="controls wrap">
+          <div class="btn-row">
+            <button id="btn-import" class="button">Importer JSON</button>
+            <input id="import-input" type="file" accept="application/json" style="display:none" />
+            <button id="btn-export" class="button">Exporter JSON</button>
+            <button id="btn-add" class="button ok">Ajouter</button>
+          </div>
+          <p class="hint">
+            Astuce : on n’autorise la suppression que depuis la modale d’édition pour éviter les clics accidentels.
+          </p>
+        </div>
+
+        <div id="games-list" class="grid"></div>
+      </div>
+
+      <footer>
+        Stockage : <b>Netlify Blobs</b> • Zéro localStorage • Thème néon/pastel.
+      </footer>
+    </section>
   </div>
-  <script src="./script.js"></script>
 
-<script>
-(function(){
-  function $(sel, root){ return (root||document).querySelector(sel); }
-  function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+  <!-- ====== Modale unique (Ajouter / Modifier) ====== -->
+  <dialog id="modal" class="modal">
+    <form id="modal-form" method="dialog" class="grid">
+      <h3 style="margin:0 0 6px">Jeu</h3>
 
-  const searchInput = $('#mf-search');
-  const typeSelect  = $('#mf-type');
-  const ageInput    = $('#mf-age');
-  const pminInput   = $('#mf-pmin');
-  const pmaxInput   = $('#mf-pmax');
+      <div class="row">
+        <div>
+          <label>Nom</label>
+          <input id="f-nom" class="input" required />
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr; gap:8px">
+          <div>
+            <label>Joueurs min</label>
+            <input id="f-min-j" class="input" type="number" min="1" />
+          </div>
+          <div>
+            <label>Joueurs max</label>
+            <input id="f-max-j" class="input" type="number" min="1" />
+          </div>
+        </div>
+      </div>
 
-  const cards = $all('.game-card').length ? $all('.game-card') : $all('.card');
+      <div class="row">
+        <div>
+          <label>Âge</label>
+          <input id="f-age-j" class="input" type="number" min="0" />
+        </div>
+        <div>
+          <label>Durée (min)</label>
+          <input id="f-duree" class="input" type="number" min="1" />
+        </div>
+      </div>
 
-  const types = new Set();
-  cards.forEach(card => {
-    $all('.badge, .tag, .pill', card).forEach(b => types.add(b.textContent.trim()));
-  });
-  const sorted = Array.from(types).sort((a,b)=>a.localeCompare(b,'fr'));
-  sorted.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t; opt.textContent = t;
-    typeSelect.appendChild(opt);
-  });
+      <div>
+        <label>Type(s) — séparés par une virgule</label>
+        <input id="f-types" class="input" placeholder="Stratégie, Familial, Ambiance" />
+      </div>
 
-  function parseNumbers(text){
-    const mRange = text.match(/(\d+)\s*[–-]\s*(\d+)/);
-    const mSingle = text.match(/(\d+)\s*joueur/);
-    let minP=null, maxP=null;
-    if(mRange){ minP = parseInt(mRange[1],10); maxP = parseInt(mRange[2],10); }
-    else if(mSingle){ minP = maxP = parseInt(mSingle[1],10); }
-    return {minP, maxP};
-  }
-  function parseAge(text){
-    const m = text.match(/(\d+)\s*\+/);
-    return m ? parseInt(m[1],10) : null;
-  }
+      <div class="row">
+        <div>
+          <label>Lien URL (fiche / avis)</label>
+          <input id="f-lien" class="input" type="url" placeholder="https://..." />
+        </div>
+        <div>
+          <label>Photo (PNG/JPG)</label>
+          <input id="f-photo" class="input" type="file" accept="image/*" />
+        </div>
+      </div>
 
-  function cardText(card){
-    const title = card.querySelector('.game-title, .title, h3, h4, strong')?.textContent || '';
-    const desc  = card.querySelector('.game-desc, .desc, p')?.textContent || '';
-    const badges= Array.from(card.querySelectorAll('.badge, .tag, .pill')).map(b=>b.textContent).join(' ');
-    const meta  = card.textContent || '';
-    return {title, desc, badges, meta};
-  }
+      <div class="row">
+        <div>
+          <label>Remarque</label>
+          <input id="f-remarque" class="input" />
+        </div>
+        <div>
+          <label>Prévisualisation</label><br />
+          <img id="preview" class="img-thumb" alt="aperçu" />
+        </div>
+      </div>
 
-  function matches(card){
-    const {title, desc, badges, meta} = cardText(card);
-    const hay = (title + ' ' + desc + ' ' + badges).toLowerCase();
-    const q = (searchInput.value||'').toLowerCase().trim();
-    if(q && !hay.includes(q)) return false;
+      <div>
+        <label>Description</label>
+        <textarea id="f-description" class="input" rows="4"></textarea>
+      </div>
 
-    const t = typeSelect.value;
-    if(t){
-      const has = Array.from(card.querySelectorAll('.badge, .tag, .pill')).some(b => b.textContent.trim() === t);
-      if(!has) return false;
-    }
+      <div class="modal-actions">
+        <button id="btn-delete" class="button danger" type="button" title="Supprimer ce jeu">Supprimer</button>
+        <div style="flex:1"></div>
+        <button id="btn-cancel" class="button ghost">Annuler</button>
+        <button class="button ok" type="submit">Enregistrer</button>
+      </div>
 
-    const metaLine = card.querySelector('.meta, .game-meta')?.textContent || meta;
-    const {minP, maxP} = parseNumbers(metaLine);
-    const age = parseAge(metaLine);
+      <!-- champ caché pour savoir si on édite -->
+      <input type="hidden" id="f-id" />
+    </form>
+  </dialog>
 
-    const ageMin = parseInt(ageInput.value,10);
-    const pmin   = parseInt(pminInput.value,10);
-    const pmax   = parseInt(pmaxInput.value,10);
-
-    if(!isNaN(ageMin) && age !== null && age < ageMin) return false;
-    if(!isNaN(pmin) && maxP !== null && maxP < pmin) return false;
-    if(!isNaN(pmax) && minP !== null && minP > pmax) return false;
-
-    return true;
-  }
-
-  function applyFilters(){
-    cards.forEach(card => {
-      card.style.display = matches(card) ? '' : 'none';
+  <!-- ====== JS minimal pour les onglets + hooks IDs conservés ====== -->
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll('.tab');
+    const panels = { consult: document.getElementById('tab-consult'), manage: document.getElementById('tab-manage') };
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        Object.values(panels).forEach(p => p.classList.remove('is-active'));
+        panels[btn.dataset.tab].classList.add('is-active');
+      });
     });
-  }
 
-  [searchInput, typeSelect, ageInput, pminInput, pmaxInput].forEach(el=>{
-    if(el) el.addEventListener('input', applyFilters);
-    if(el) el.addEventListener('change', applyFilters);
-  });
+    // Expose a tiny API that existing script.js can hook into if présent.
+    window.__ludo = {
+      openModal: (payload = {}) => {
+        const m = document.getElementById('modal');
+        document.getElementById('f-id').value = payload.id ?? '';
+        document.getElementById('f-nom').value = payload.nom ?? '';
+        document.getElementById('f-min-j').value = payload.min ?? '';
+        document.getElementById('f-max-j').value = payload.max ?? '';
+        document.getElementById('f-age-j').value = payload.age ?? '';
+        document.getElementById('f-duree').value = payload.duree ?? '';
+        document.getElementById('f-types').value = (payload.types || []).join(', ');
+        document.getElementById('f-lien').value = payload.lien ?? '';
+        document.getElementById('f-remarque').value = payload.remarque ?? '';
+        document.getElementById('f-description').value = payload.description ?? '';
+        document.getElementById('preview').src = payload.photo || '';
+        m.showModal();
+      },
+      closeModal: () => document.getElementById('modal').close(),
+    };
 
-  applyFilters();
-})();
-</script>
+    document.getElementById('btn-cancel').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.__ludo.closeModal();
+    });
 
+    document.getElementById('modal').addEventListener('cancel', (e) => { e.preventDefault(); });
+
+    document.getElementById('btn-import').addEventListener('click', () => {
+      document.getElementById('import-input').click();
+    });
+  </script>
+
+  <!-- Script Blobs (placeholder à remplacer par le tien si besoin) -->
+  <script src="./script.js"></script>
 </body>
 </html>

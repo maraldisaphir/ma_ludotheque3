@@ -16,7 +16,7 @@
     --fg: #0f172a;
     --muted: #53616e;
     --card: #ffffff;
-    --accent: #7c3aed;   /* keep accent vivid, pastel overall */
+    --accent: #7c3aed;
     --accent2: #0ea5e9;
     --shadow: 0 8px 24px rgba(0,0,0,.08);
   }
@@ -80,8 +80,33 @@ h1 {
   border-color: rgba(124,58,237,.35);
 }
 
-.button.danger { border-color: rgba(239,68,68,.5); color: #fee2e2; }
-.button.ok { border-color: rgba(16,185,129,.5); color: #d1fae5; }
+/* ✅ Bouton Ajouter (sombre : texte vert néon, clair : texte vert foncé) */
+.button.ok {
+  border-color: rgba(16,185,129,.6);
+  background: rgba(16,185,129,.18);
+  color: #16f59a;
+  font-weight: 600;
+}
+@media (prefers-color-scheme: light) {
+  .button.ok {
+    background: #d1fae5;
+    color: #065f46;
+  }
+}
+
+/* ✅ Bouton Supprimer (sombre : texte rouge néon, clair : texte rouge foncé) */
+.button.danger {
+  border-color: rgba(239,68,68,.6);
+  background: rgba(239,68,68,.18);
+  color: #f87171;
+  font-weight: 600;
+}
+@media (prefers-color-scheme: light) {
+  .button.danger {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
 
 .card {
   background: var(--card);

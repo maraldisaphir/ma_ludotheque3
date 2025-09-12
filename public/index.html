@@ -1,48 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ludothèque – Consultation</title>
-  <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ludothèque</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="consultation">
-  <div class="container">
-    <div class="header">
-      <h1>🎲 Ludothèque — Consultation</h1>
-      <div style="display:flex; gap:8px">
-        <a class="button ghost" href="./gestion.html">Gérer</a>
-      </div>
-    </div>
+<body>
+  <h1>Ma Ludothèque</h1>
 
-    <div class="card">
-      <div class="controls">
-        <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…">
-        <select id="f-type" class="input" style="max-width:220px"></select>
-        <input id="f-age" class="input" type="number" min="0" placeholder="Âge min">
-        <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min">
-        <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max">
-      </div>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Jeu</th>
-            <th>Joueurs</th>
-            <th>Âge</th>
-            <th>Durée</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-
-    <footer>
-      Mode sombre (glow néon) / clair (pastel). Données chargées automatiquement depuis Netlify Blobs.
-    </footer>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Nb Joueurs</th>
+          <th>Âge</th>
+          <th>Durée (min)</th>
+          <th>Type</th>
+          <th>Remarque</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Catan</td>
+          <td>3-4</td>
+          <td>10+</td>
+          <td>60</td>
+          <td>Stratégie</td>
+          <td>Classique</td>
+        </tr>
+        <tr>
+          <td>Dixit</td>
+          <td>3-6</td>
+          <td>8+</td>
+          <td>30</td>
+          <td>Ambiance</td>
+          <td>Familial</td>
+        </tr>
+        <tr>
+          <td>7 Wonders</td>
+          <td>3-7</td>
+          <td>12+</td>
+          <td>45</td>
+          <td>Cartes, Draft</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <script src="./script.js"></script>
 </body>
 </html>

@@ -189,18 +189,47 @@ footer { margin-top: 26px; font-size: 12px; color: var(--muted); opacity: .9; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ===== Responsive: horizontal scroll container for table on mobile ===== */
-.table-container{
+/* ==== Filters trio: age + players min + players max on one line (PC + mobile) ==== */
+.filters-trio{
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: center;
   width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  margin-top: 10px;
 }
-.table-container table{
-  min-width: 720px; /* keep all columns readable; user can scroll */
-  border-collapse: collapse;
+.filters-trio .input,
+.filters-trio input[type="number"]{
+  flex: 1 1 0;
+  min-width: 0;            /* prevents overflow, lets flex shrink */
+  max-width: 100%;
+  padding: 10px 12px;
+  height: 44px;
+  box-sizing: border-box;
 }
-.table-container::-webkit-scrollbar{ height: 6px; }
-.table-container::-webkit-scrollbar-thumb{
-  background: rgba(0,0,0,.2);
-  border-radius: 4px;
+.filters-trio input::placeholder{
+  opacity: .8;
+}
+
+/* Keep it tight but on one row even on small phones */
+@media (max-width: 520px){
+  .filters-trio{ gap: 8px; }
+  .filters-trio .input,
+  .filters-trio input[type="number"]{
+    padding: 8px 10px;
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+/* Ultra small phones */
+@media (max-width: 360px){
+  .filters-trio{ gap: 6px; }
+  .filters-trio .input,
+  .filters-trio input[type="number"]{
+    padding: 7px 8px;
+    height: 40px;
+    font-size: 13px;
+  }
 }

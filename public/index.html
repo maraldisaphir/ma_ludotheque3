@@ -1,204 +1,50 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ludothèque — Consultation & Gestion</title>
-  <link rel="stylesheet" href="./style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ludothèque – Consultation</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
-<body data-page="single">
+<body data-page="consultation">
   <div class="container">
-    <!-- Header + Tabs -->
     <div class="header">
-      <h1>🎲 Ludothèque</h1>
-      <nav class="tabs" role="tablist" aria-label="Navigation">
-        <button class="tab is-active" data-tab="consult" role="tab" aria-selected="true">Consulter</button>
-        <button class="tab" data-tab="manage" role="tab" aria-selected="false">Gérer</button>
-      </nav>
+      <h1>🎲 Ludothèque — Consultation</h1>
+      <div style="display:flex; gap:8px">
+        <a class="button ghost" href="./gestion.html">Gérer</a>
+      </div>
     </div>
 
-    <!-- ====== Onglet CONSULTER ====== -->
-    <section id="tab-consult" class="tab-panel is-active" role="tabpanel" aria-labelledby="consult">
-      <div class="card">
-        <div class="controls">
-          <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…" />
-          <select id="f-type" class="input" style="max-width:220px"></select>
+    <div class="card">
+      <div class="controls">
+        <input id="search" class="input" placeholder="Rechercher un jeu, un type, une description…">
+        <select id="f-type" class="input" style="max-width:220px"></select>
+<div class="filters-trio">
+  <input id="f-age" class="input" type="number" min="0" placeholder="Âge min">
+  <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min">
+  <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max">
+</div>
+</div>
 
-          <div class="filters-trio">
-            <input id="f-age" class="input" type="number" min="0" placeholder="Âge min" />
-            <input id="f-min" class="input" type="number" min="1" placeholder="Joueurs min" />
-            <input id="f-max" class="input" type="number" min="1" placeholder="Joueurs max" />
-          </div>
-        </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Jeu</th>
+            <th>Joueurs</th>
+            <th>Âge</th>
+            <th>Durée</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Jeu</th>
-              <th>Joueurs</th>
-              <th>Âge</th>
-              <th>Durée</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-
-      <footer>
-        Mode sombre (glow néon) / clair (pastel). Données chargées automatiquement depuis Netlify Blobs.
-      </footer>
-    </section>
-
-    <!-- ====== Onglet GERER ====== -->
-    <section id="tab-manage" class="tab-panel" role="tabpanel" aria-labelledby="manage">
-      <div class="card">
-        <div class="controls wrap">
-          <div class="btn-row">
-            <button id="btn-import" class="button">Importer JSON</button>
-            <input id="import-input" type="file" accept="application/json" style="display:none" />
-            <button id="btn-export" class="button">Exporter JSON</button>
-            <button id="btn-add" class="button ok">Ajouter</button>
-          </div>
-          <p class="hint">
-            Astuce : on n’autorise la suppression que depuis la modale d’édition pour éviter les clics accidentels.
-          </p>
-        </div>
-
-        <div id="games-list" class="grid"></div>
-      </div>
-
-      <footer>
-        Stockage : <b>Netlify Blobs</b> • Zéro localStorage • Thème néon/pastel.
-      </footer>
-    </section>
+    <footer>
+      Mode sombre (glow néon) / clair (pastel). Données chargées automatiquement depuis Netlify Blobs.
+    </footer>
   </div>
-
-  <!-- ====== Modale unique (Ajouter / Modifier) ====== -->
-  <dialog id="modal" class="modal">
-    <form id="modal-form" method="dialog" class="grid">
-      <h3 style="margin:0 0 6px">Jeu</h3>
-
-      <div class="row">
-        <div>
-          <label>Nom</label>
-          <input id="f-nom" class="input" required />
-        </div>
-        <div class="row" style="grid-template-columns:1fr 1fr; gap:8px">
-          <div>
-            <label>Joueurs min</label>
-            <input id="f-min-j" class="input" type="number" min="1" />
-          </div>
-          <div>
-            <label>Joueurs max</label>
-            <input id="f-max-j" class="input" type="number" min="1" />
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Âge</label>
-          <input id="f-age-j" class="input" type="number" min="0" />
-        </div>
-        <div>
-          <label>Durée (min)</label>
-          <input id="f-duree" class="input" type="number" min="1" />
-        </div>
-      </div>
-
-      <div>
-        <label>Type(s) — séparés par une virgule</label>
-        <input id="f-types" class="input" placeholder="Stratégie, Familial, Ambiance" />
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Lien URL (fiche / avis)</label>
-          <input id="f-lien" class="input" type="url" placeholder="https://..." />
-        </div>
-        <div>
-          <label>Photo (PNG/JPG)</label>
-          <input id="f-photo" class="input" type="file" accept="image/*" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Remarque</label>
-          <input id="f-remarque" class="input" />
-        </div>
-        <div>
-          <label>Prévisualisation</label><br />
-          <img id="preview" class="img-thumb" alt="aperçu" />
-        </div>
-      </div>
-
-      <div>
-        <label>Description</label>
-        <textarea id="f-description" class="input" rows="4"></textarea>
-      </div>
-
-      <div class="modal-actions">
-        <button id="btn-delete" class="button danger" type="button" title="Supprimer ce jeu">Supprimer</button>
-        <div style="flex:1"></div>
-        <button id="btn-cancel" class="button ghost">Annuler</button>
-        <button class="button ok" type="submit">Enregistrer</button>
-      </div>
-
-      <!-- champ caché pour savoir si on édite -->
-      <input type="hidden" id="f-id" />
-    </form>
-  </dialog>
-
-  <!-- ====== JS minimal pour les onglets + hooks IDs conservés ====== -->
-  <script>
-    // Tabs
-    const tabs = document.querySelectorAll('.tab');
-    const panels = { consult: document.getElementById('tab-consult'), manage: document.getElementById('tab-manage') };
-    tabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabs.forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        Object.values(panels).forEach(p => p.classList.remove('is-active'));
-        panels[btn.dataset.tab].classList.add('is-active');
-      });
-    });
-
-    // Expose a tiny API that existing script.js can hook into if présent.
-    window.__ludo = {
-      openModal: (payload = {}) => {
-        const m = document.getElementById('modal');
-        document.getElementById('f-id').value = payload.id ?? '';
-        document.getElementById('f-nom').value = payload.nom ?? '';
-        document.getElementById('f-min-j').value = payload.min ?? '';
-        document.getElementById('f-max-j').value = payload.max ?? '';
-        document.getElementById('f-age-j').value = payload.age ?? '';
-        document.getElementById('f-duree').value = payload.duree ?? '';
-        document.getElementById('f-types').value = (payload.types || []).join(', ');
-        document.getElementById('f-lien').value = payload.lien ?? '';
-        document.getElementById('f-remarque').value = payload.remarque ?? '';
-        document.getElementById('f-description').value = payload.description ?? '';
-        document.getElementById('preview').src = payload.photo || '';
-        m.showModal();
-      },
-      closeModal: () => document.getElementById('modal').close(),
-    };
-
-    document.getElementById('btn-cancel').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.__ludo.closeModal();
-    });
-
-    document.getElementById('modal').addEventListener('cancel', (e) => { e.preventDefault(); });
-
-    document.getElementById('btn-import').addEventListener('click', () => {
-      document.getElementById('import-input').click();
-    });
-  </script>
-
-  <!-- Script Blobs (placeholder à remplacer par le tien si besoin) -->
   <script src="./script.js"></script>
 </body>
 </html>

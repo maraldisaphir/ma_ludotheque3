@@ -2,12 +2,10 @@
   publish = "public"
   functions = "netlify/functions"
 
-# Enable edge-compatible function format v2 automatically
 [functions]
   node_bundler = "esbuild"
   external_node_modules = []
 
-# Declare a persistent Blob store
 [[blobs]]
   name = "ludotheque"
   retention = "forever"

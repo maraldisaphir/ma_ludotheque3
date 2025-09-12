@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ludothèque – Gestion</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-page="gestion">
+  <div class="container">
+    <div class="header">
+      <h1>🎲 Ludothèque — Gestion</h1>
+      <div style="display:flex; gap:8px">
+        <a class="button ghost" href="./index.html">Consulter</a>
+        <button id="btn-import" class="button">Importer JSON</button>
+        <input id="import-input" type="file" accept="application/json" style="display:none">
+        <button id="btn-export" class="button">Exporter JSON</button>
+        <button id="btn-add" class="button ok">Ajouter</button>
+      </div>
+    </div>
+
+    <div id="games-list" class="grid"></div>
+
+    <footer>
+      Stockage : <b>Netlify Blobs</b> • Zéro localStorage • Thème néon/pastel.
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <dialog id="modal" style="max-width: 780px; width: 96%; border: none; border-radius: 16px; background: var(--card); color: var(--fg);">
+    <form id="modal-form" method="dialog" class="grid">
+      <h3 style="margin:0 0 6px">Jeu</h3>
+      <div class="row">
+        <div>
+          <label>Nom</label>
+          <input id="f-nom" class="input" required>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr; gap:8px">
+          <div>
+            <label>Joueurs min</label>
+            <input id="f-min" class="input" type="number" min="1">
+          </div>
+          <div>
+            <label>Joueurs max</label>
+            <input id="f-max" class="input" type="number" min="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Âge</label>
+          <input id="f-age" class="input" type="number" min="0">
+        </div>
+        <div>
+          <label>Durée (min)</label>
+          <input id="f-duree" class="input" type="number" min="1">
+        </div>
+      </div>
+
+      <div>
+        <label>Type(s) — séparés par une virgule</label>
+        <input id="f-types" class="input" placeholder="Stratégie, Familial, Ambiance">
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Lien URL (fiche / avis)</label>
+          <input id="f-lien" class="input" type="url" placeholder="https://...">
+        </div>
+        <div>
+          <label>Photo (PNG/JPG)</label>
+          <input id="f-photo" class="input" type="file" accept="image/*">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Remarque</label>
+          <input id="f-remarque" class="input">
+        </div>
+        <div>
+          <label>Prévisualisation</label><br>
+          <img id="preview" class="img-thumb" alt="aperçu">
+        </div>
+      </div>
+
+      <div>
+        <label>Description</label>
+        <textarea id="f-description" class="input" rows="4"></textarea>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px">
+        <button id="btn-cancel" class="button ghost">Annuler</button>
+        <button class="button ok" type="submit">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./script.js"></script>
+</body>
+</html>

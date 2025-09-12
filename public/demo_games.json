@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo-1",
+    "nom": "Catan",
+    "nbJoueurMin": 3,
+    "nbJoueurMax": 4,
+    "age": 10,
+    "duree": 90,
+    "type": [
+      "Stratégie",
+      "Commerce"
+    ],
+    "remarque": "Version Marins disponible",
+    "photo": "",
+    "lien": "https://fr.wikipedia.org/wiki/Les_Colons_de_Catan",
+    "description": "Gestion et échanges de ressources sur une île."
+  }
+]

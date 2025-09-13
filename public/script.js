@@ -88,17 +88,7 @@ async function initGestion() {
       edit.textContent = 'Modifier';
       edit.onclick = () => openModal(g);
 
-      const del = document.createElement('button');
-      del.className = 'button danger';
-      del.textContent = 'Supprimer';
-      del.onclick = async () => {
-        if (!confirm(`Supprimer "${g.nom}" ?`)) return;
-        games = games.filter(x => x.id !== g.id);
-        await saveGames(games);
-        render();
-      };
-
-      actions.append(edit, del);
+      actions.append(edit);
       row.append(img, info, actions);
       listEl.appendChild(row);
     }

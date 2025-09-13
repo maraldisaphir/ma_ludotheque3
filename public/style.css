@@ -189,47 +189,22 @@ footer { margin-top: 26px; font-size: 12px; color: var(--muted); opacity: .9; }
 a { color: var(--accent2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ==== Filters trio: age + players min + players max on one line (PC + mobile) ==== */
-.filters-trio{
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 12px;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
+/* ---- Compact trio: Âge min / Joueurs min / Joueurs max on one line ---- */
+.controls-trio{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:nowrap;
 }
-.filters-trio .input,
-.filters-trio input[type="number"]{
-  flex: 1 1 0;
-  min-width: 0;            /* prevents overflow, lets flex shrink */
-  max-width: 100%;
-  padding: 10px 12px;
-  height: 44px;
-  box-sizing: border-box;
+.controls-trio .input{
+  max-width:120px;
+  min-width:88px;
+  padding:8px 10px;
 }
-.filters-trio input::placeholder{
-  opacity: .8;
+@media (max-width: 640px){
+  .controls-trio{ width:100%; }
+  .controls-trio .input{ flex:1; max-width:unset; }
 }
 
-/* Keep it tight but on one row even on small phones */
-@media (max-width: 520px){
-  .filters-trio{ gap: 8px; }
-  .filters-trio .input,
-  .filters-trio input[type="number"]{
-    padding: 8px 10px;
-    height: 42px;
-    font-size: 14px;
-  }
-}
-
-/* Ultra small phones */
-@media (max-width: 360px){
-  .filters-trio{ gap: 6px; }
-  .filters-trio .input,
-  .filters-trio input[type="number"]{
-    padding: 7px 8px;
-    height: 40px;
-    font-size: 13px;
-  }
-}
+/* Masquer le bouton Consulté dans la page gestion */
+button:contains('Consulter'), .btn-consulter { display: none !important; }

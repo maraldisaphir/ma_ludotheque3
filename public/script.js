@@ -121,6 +121,21 @@ async function initGestion() {
     get('#f-description').value = game?.description || '';
     get('#preview').src = game?.photo || '';
     get('#f-photo').value = '';
+    const delBtn = modal.querySelector('#btn-delete');
+    if (game) {
+      delBtn.style.display = 'inline-flex';
+      delBtn.onclick = async () => {
+        if (!confirm(`Supprimer "${game.nom}" ?`)) return;
+        games = games.filter(x => x.id !== game.id);
+        await saveGames(games);
+        closeModal();
+        render();
+      };
+    } else {
+      delBtn.style.display = 'none';
+      delBtn.onclick = null;
+    }
+
   }
 
   function closeModal() {

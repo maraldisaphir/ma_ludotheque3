@@ -231,3 +231,18 @@ a:hover { text-decoration: underline; }
 .drawer-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .drawer-content { display:flex; flex-direction:column; gap:10px; }
 .input.small { max-width:100%; padding:6px 8px; font-size:13px; }
+
+.footer-bar {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  background: var(--card);
+  padding:10px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.2);
+  z-index:150;
+}
+body { padding-bottom: 70px; }

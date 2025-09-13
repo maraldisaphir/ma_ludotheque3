@@ -90,10 +90,15 @@
         <textarea id="f-description" class="input" rows="4"></textarea>
       </div>
 
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px">
-        <button id="btn-cancel" class="button ghost">Annuler</button>
-        <button class="button ok" type="submit">Enregistrer</button>
+      
+      <div style="display:flex; justify-content:space-between; margin-top:6px">
+        <button id="btn-delete" class="button danger" style="display:none">Supprimer</button>
+        <div style="display:flex; gap:8px; justify-content:flex-end">
+          <button id="btn-cancel" class="button ghost">Annuler</button>
+          <button class="button ok" type="submit">Enregistrer</button>
+        </div>
       </div>
+    
     </form>
   </dialog>
 
@@ -102,7 +107,7 @@
 <div id="overlay" class="overlay" style="display:none"></div>
 <div id="filter-drawer" class="drawer">
   <div class="drawer-header">
-    <h3>Filtres</h3>
+    <h3 style="margin:0">Filtres <span id="filter-count" class="badge" style="font-size:12px; margin-left:6px;">0/0</span></h3>
     <button id="btn-close-drawer" class="button ghost">Fermer</button>
   </div>
   <div class="drawer-content">
@@ -113,6 +118,13 @@
     <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
   </div>
 </div>
+
+
+<footer class="footer-bar">
+  <button id="btn-import" class="button">Importer JSON</button>
+  <input id="import-input" type="file" accept="application/json" style="display:none">
+  <button id="btn-export" class="button">Exporter JSON</button>
+</footer>
 
 </body>
 </html>

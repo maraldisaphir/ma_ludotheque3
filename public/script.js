@@ -49,6 +49,30 @@ async function initGestion() {
   let games = [];
   const state = { editingId: null };
 
+
+  const fltSearch = document.querySelector('#flt-search');
+  const fltAge = document.querySelector('#flt-age');
+  const fltMin = document.querySelector('#flt-min');
+  const fltMax = document.querySelector('#flt-max');
+  const fltDuree = document.querySelector('#flt-duree');
+
+  function applyFilters(list) {
+    const q = (fltSearch.value||'').toLowerCase();
+    const age = parseInt(fltAge.value||'0',10) || 0;
+    const minP = parseInt(fltMin.value||'0',10) || 0;
+    const maxP = parseInt(fltMax.value||'0',10) || 0;
+    const duree = parseInt(fltDuree.value||'0',10) || 0;
+
+    return list.filter(g=>{
+      const matchesQ = !q || (g.nom+" "+g.description+" "+g.remarque).toLowerCase().includes(q);
+      const matchesAge = !age || (g.age||0) >= age;
+      const matchesMin = !minP || ((g.nbJoueurMin||0) <= minP && (g.nbJoueurMax||0) >= minP);
+      const matchesMax = !maxP || ((g.nbJoueurMin||0) <= maxP && (g.nbJoueurMax||0) >= maxP);
+      const matchesDur = !duree || (g.duree||9999) <= duree;
+      return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
+    });
+  }
+
   async function load() {
     games = await fetchGames();
     render();
@@ -60,7 +84,7 @@ async function initGestion() {
       listEl.innerHTML = '<div class="card">Aucun jeu pour le moment. Cliquez sur <b>Ajouter</b>.</div>';
       return;
     }
-    for (const g of games) {
+    for (const g of applyFilters(games)) {
       const row = document.createElement('div');
       row.className = 'card';
       row.style.display = 'grid';
@@ -88,7 +112,17 @@ async function initGestion() {
       edit.textContent = 'Modifier';
       edit.onclick = () => openModal(g);
 
-      actions.append(edit);
+      const del = document.createElement('button');
+      del.className = 'button danger';
+      del.textContent = 'Supprimer';
+      del.onclick = async () => {
+        if (!confirm(`Supprimer "${g.nom}" ?`)) return;
+        games = games.filter(x => x.id !== g.id);
+        await saveGames(games);
+        render();
+      };
+
+      actions.append(edit, del);
       row.append(img, info, actions);
       listEl.appendChild(row);
     }
@@ -111,21 +145,6 @@ async function initGestion() {
     get('#f-description').value = game?.description || '';
     get('#preview').src = game?.photo || '';
     get('#f-photo').value = '';
-    const delBtn = modal.querySelector('#btn-delete');
-    if (game) {
-      delBtn.style.display = 'inline-flex';
-      delBtn.onclick = async () => {
-        if (!confirm(`Supprimer "${game.nom}" ?`)) return;
-        games = games.filter(x => x.id !== game.id);
-        await saveGames(games);
-        closeModal();
-        render();
-      };
-    } else {
-      delBtn.style.display = 'none';
-      delBtn.onclick = null;
-    }
-
   }
 
   function closeModal() {
@@ -189,10 +208,14 @@ async function initGestion() {
     if (!Array.isArray(data)) { alert('Le fichier doit contenir un tableau de jeux'); return; }
     await saveGames(data);
     await load();
+  [fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>el.addEventListener('input', render));
+
     alert('Import terminé.');
   };
 
   await load();
+  [fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>el.addEventListener('input', render));
+
 }
 
 // --- Consultation Page Logic ---

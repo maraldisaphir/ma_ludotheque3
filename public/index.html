@@ -9,12 +9,20 @@
 <body data-page="gestion">
   <div class="container">
     <div class="header">
+    <div class="filters">
+      <input id="flt-search" class="input small" placeholder="Contient…">
+      <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
+      <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
+      <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
+      <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
+    </div>
+
       <h1>🎲 Ludothèque — Gestion</h1>
       <div style="display:flex; gap:8px">
         
-        <button id="btn-import" class="button">Importer JSON</button>
-        <input id="import-input" type="file" accept="application/json" style="display:none">
-        <button id="btn-export" class="button">Exporter JSON</button>
+        
+        
+        
         <button id="btn-add" class="button ok">Ajouter</button>
       </div>
     </div>
@@ -90,18 +98,20 @@
         <textarea id="f-description" class="input" rows="4"></textarea>
       </div>
 
-      
-  <div style="display:flex; justify-content:space-between; margin-top:6px">
-    <button id="btn-delete" class="button danger" style="display:none">Supprimer</button>
-    <div style="display:flex; gap:8px; justify-content:flex-end">
-      <button id="btn-cancel" class="button ghost">Annuler</button>
-      <button class="button ok" type="submit">Enregistrer</button>
-    </div>
-  </div>
-
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px">
+        <button id="btn-cancel" class="button ghost">Annuler</button>
+        <button class="button ok" type="submit">Enregistrer</button>
+      </div>
     </form>
   </dialog>
 
   <script src="./script.js"></script>
+
+<footer class="footer-bar">
+  <button id="btn-import" class="button">Importer JSON</button>
+  <input id="import-input" type="file" accept="application/json" style="display:none">
+  <button id="btn-export" class="button">Exporter JSON</button>
+</footer>
+
 </body>
 </html>

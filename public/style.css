@@ -205,3 +205,29 @@ a:hover { text-decoration: underline; }
   .controls-trio{ width:100%; }
   .controls-trio .input{ flex:1; max-width:unset; }
 }
+
+.filters {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin: 0 0 16px;
+}
+.input.small {
+  max-width:100px;
+  padding:6px 8px;
+  font-size:13px;
+}
+.footer-bar {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  background: var(--card);
+  padding:10px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.2);
+  z-index:100;
+}
+body { padding-bottom: 70px; }

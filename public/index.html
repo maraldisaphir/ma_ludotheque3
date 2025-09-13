@@ -9,20 +9,12 @@
 <body data-page="gestion">
   <div class="container">
     <div class="header">
-    <div class="filters">
-      <input id="flt-search" class="input small" placeholder="Contient…">
-      <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
-      <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
-      <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
-      <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
-    </div>
-
       <h1>🎲 Ludothèque — Gestion</h1>
-      <div style="display:flex; gap:8px">
+      <div style="display:flex; gap:8px"><button id="btn-filters" class="button ghost">☰ Filtres</button>
         
-        
-        
-        
+        <button id="btn-import" class="button">Importer JSON</button>
+        <input id="import-input" type="file" accept="application/json" style="display:none">
+        <button id="btn-export" class="button">Exporter JSON</button>
         <button id="btn-add" class="button ok">Ajouter</button>
       </div>
     </div>
@@ -107,11 +99,20 @@
 
   <script src="./script.js"></script>
 
-<footer class="footer-bar">
-  <button id="btn-import" class="button">Importer JSON</button>
-  <input id="import-input" type="file" accept="application/json" style="display:none">
-  <button id="btn-export" class="button">Exporter JSON</button>
-</footer>
+<div id="overlay" class="overlay" style="display:none"></div>
+<div id="filter-drawer" class="drawer">
+  <div class="drawer-header">
+    <h3>Filtres</h3>
+    <button id="btn-close-drawer" class="button ghost">Fermer</button>
+  </div>
+  <div class="drawer-content">
+    <input id="flt-search" class="input small" placeholder="Contient…">
+    <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
+    <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
+    <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
+    <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
+  </div>
+</div>
 
 </body>
 </html>

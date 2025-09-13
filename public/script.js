@@ -73,6 +73,20 @@ async function initGestion() {
     });
   }
 
+  const overlay = document.getElementById('overlay');
+  const drawer = document.getElementById('filter-drawer');
+  const btnFilters = document.getElementById('btn-filters');
+  const btnCloseDrawer = document.getElementById('btn-close-drawer');
+
+  function openDrawer(){ drawer.classList.add('open'); overlay.style.display='block'; }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.style.display='none'; }
+
+  if(btnFilters){ btnFilters.onclick = openDrawer; }
+  if(btnCloseDrawer){ btnCloseDrawer.onclick = closeDrawer; }
+  if(overlay){ overlay.onclick = closeDrawer; }
+
+  [fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>el.addEventListener('input', render));
+
   async function load() {
     games = await fetchGames();
     render();
@@ -112,17 +126,7 @@ async function initGestion() {
       edit.textContent = 'Modifier';
       edit.onclick = () => openModal(g);
 
-      const del = document.createElement('button');
-      del.className = 'button danger';
-      del.textContent = 'Supprimer';
-      del.onclick = async () => {
-        if (!confirm(`Supprimer "${g.nom}" ?`)) return;
-        games = games.filter(x => x.id !== g.id);
-        await saveGames(games);
-        render();
-      };
-
-      actions.append(edit, del);
+      actions.append(edit);
       row.append(img, info, actions);
       listEl.appendChild(row);
     }
@@ -145,6 +149,21 @@ async function initGestion() {
     get('#f-description').value = game?.description || '';
     get('#preview').src = game?.photo || '';
     get('#f-photo').value = '';
+    const delBtn = modal.querySelector('#btn-delete');
+    if (game) {
+      delBtn.style.display = 'inline-flex';
+      delBtn.onclick = async () => {
+        if (!confirm(`Supprimer "${game.nom}" ?`)) return;
+        games = games.filter(x => x.id !== game.id);
+        await saveGames(games);
+        closeModal();
+        render();
+      };
+    } else {
+      delBtn.style.display = 'none';
+      delBtn.onclick = null;
+    }
+
   }
 
   function closeModal() {
@@ -208,14 +227,10 @@ async function initGestion() {
     if (!Array.isArray(data)) { alert('Le fichier doit contenir un tableau de jeux'); return; }
     await saveGames(data);
     await load();
-  [fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>el.addEventListener('input', render));
-
     alert('Import terminé.');
   };
 
   await load();
-  [fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>el.addEventListener('input', render));
-
 }
 
 // --- Consultation Page Logic ---

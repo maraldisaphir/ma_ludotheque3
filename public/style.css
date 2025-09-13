@@ -208,3 +208,6 @@ a:hover { text-decoration: underline; }
 
 /* Masquer le bouton Consulté dans la page gestion */
 button:contains('Consulter'), .btn-consulter { display: none !important; }
+
+/* Masquer le bouton Consulté dans la page gestion */
+#btn-consulter { display: none !important; }

@@ -205,9 +205,3 @@ a:hover { text-decoration: underline; }
   .controls-trio{ width:100%; }
   .controls-trio .input{ flex:1; max-width:unset; }
 }
-
-/* Masquer le bouton Consulté dans la page gestion */
-button:contains('Consulter'), .btn-consulter { display: none !important; }
-
-/* Masquer le bouton Consulté dans la page gestion */
-#btn-consulter { display: none !important; }

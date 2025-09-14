@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ludothèque – Gestion</title>
+  <title>Ludothèque de Saphir</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body data-page="gestion">
   <div class="container">
     <div class="header">
-      <h1>🎲 Ludothèque — Gestion</h1>
+      <h1>🎲 Ludothèque de Saphir</h1>
       <div class="actions">
         <select id="filter-type" class="input small" multiple></select>
         <input id="search-name" class="input small" placeholder="Rechercher par nom…">
@@ -69,7 +69,8 @@
       <div class="row">
         <div>
           <label>Lien URL (fiche / avis)</label>
-          <input id="f-lien" class="input" type="url" placeholder="https://...">
+          <input id="f-lien" class="input" type="url" placeholder="https://..." style="width:100%">
+          <a id="f-lien-preview" href="#" target="_blank" style="display:none; font-size:13px; color:var(--accent); margin-top:4px; text-decoration:underline;">Ouvrir le lien</a>
         </div>
         <div>
           <label>Photo (PNG/JPG)</label>

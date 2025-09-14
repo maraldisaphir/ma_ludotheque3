@@ -145,7 +145,23 @@ async function initGestion() {
     get('#f-duree').value = game?.duree ?? '';
     get('#f-types').value = (game?.type || []).join(', ');
     get('#f-remarque').value = game?.remarque || '';
-    get('#f-lien').value = game?.lien || '';
+    const lienInput = get('#f-lien');
+    const lienPreview = get('#f-lien-preview');
+    lienInput.value = game?.lien || '';
+    if (game?.lien) {
+      lienPreview.href = game.lien;
+      lienPreview.style.display = 'inline';
+    } else {
+      lienPreview.style.display = 'none';
+    }
+    lienInput.oninput = () => {
+      if (lienInput.value.trim()) {
+        lienPreview.href = lienInput.value.trim();
+        lienPreview.style.display = 'inline';
+      } else {
+        lienPreview.style.display = 'none';
+      }
+    };
     get('#f-description').value = game?.description || '';
     get('#preview').src = game?.photo || '';
     get('#f-photo').value = '';

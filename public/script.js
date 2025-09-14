@@ -271,7 +271,8 @@ function closeModal() {
     if (!Array.isArray(data)) { alert('Le fichier doit contenir un tableau de jeux'); return; }
     await saveGames(data);
     await load();
-  document.querySelector('#sort-select')?.addEventListener('change', render);
+  const sortSelect = document.querySelector('#sort-select');
+  if(sortSelect){ sortSelect.addEventListener('change', render); }
 
   ;[fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>{ if(el) el.addEventListener('input', render); });
     alert('Import terminé.');

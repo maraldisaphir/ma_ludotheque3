@@ -11,7 +11,7 @@
     <div class="header">
       <h1>🎲 Ludothèque — Gestion</h1>
       <div class="actions">
-        <button id="btn-filters" class="button ghost">☰ Filtres</button>
+        <select id="filter-type" class="input small" multiple></select>
         <select id="sort-select" class="input small">
           <option value="nom">Nom</option>
           <option value="type">Type</option>
@@ -110,21 +110,5 @@
   </dialog>
 
   <script src="./script.js"></script>
-
-  <div id="overlay" class="overlay" style="display:none"></div>
-  <div id="filter-drawer" class="drawer">
-    <div class="drawer-header">
-      <h3 style="margin:0">Filtres <span id="filter-count" class="badge" style="font-size:12px; margin-left:6px;">0/0</span></h3>
-      <button id="btn-close-drawer" class="button ghost">Fermer</button>
-    </div>
-    <div class="drawer-content">
-      <input id="flt-search" class="input small" placeholder="Contient…">
-      <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
-      <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
-      <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
-      <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
-    </div>
-  </div>
-
 </body>
 </html>

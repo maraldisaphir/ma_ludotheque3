@@ -68,123 +68,16 @@ async function initGestion() {
   if(overlay) overlay.onclick = closeDrawer;
 
   function applyFilters(list) {
-    const q = (fltSearch?.value||'').toLowerCase();
-    const age = parseInt(fltAge?.value||'0',10) || 0;
-    const minP = parseInt(fltMin?.value||'0',10) || 0;
-    const maxP = parseInt(fltMax?.value||'0',10) || 0;
-    const duree = parseInt(fltDuree?.value||'0',10) || 0;
-
-    return list.filter(g=>{
-      const matchesQ = !q || (g.nom+" "+g.description+" "+g.remarque).toLowerCase().includes(q);
-      const matchesAge = !age || (g.age||0) >= age;
-      const matchesMin = !minP || ((g.nbJoueurMin||0) <= minP && (g.nbJoueurMax||0) >= minP);
-      const matchesMax = !maxP || ((g.nbJoueurMin||0) <= maxP && (g.nbJoueurMax||0) >= maxP);
-      const matchesDur = !duree || (g.duree||9999) <= duree;
-      return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
-    });
+  const filterType = document.querySelector('#filter-type');
+  let selected = [];
+  if(filterType){
+    selected = Array.from(filterType.selectedOptions).map(o => o.value);
   }
-
-  async function load() {
-    games = await fetchGames();
-    render();
-  }
-
-  
-  function render() {
-    listEl.innerHTML = '';
-    if (!games.length) {
-      listEl.innerHTML = '<div class="card">Aucun jeu pour le moment. Cliquez sur <b>Ajouter</b>.</div>';
-      if (countBadge) countBadge.textContent = `0/0`;
-      return;
-    }
-
-    const rows = applyFilters(games);
-    const sortBy = document.querySelector('#sort-select')?.value || 'nom';
-    rows.sort((a,b)=>{
-      if(sortBy === 'nom') return (a.nom||'').localeCompare(b.nom||'');
-      if(sortBy === 'type') return ((a.type||[]).join(',')||'').localeCompare((b.type||[]).join(',')||'');
-      if(sortBy === 'age') return (a.age||0) - (b.age||0);
-      if(sortBy === 'duree') return (a.duree||0) - (b.duree||0);
-      return 0;
-    });
-
-    if (countBadge) countBadge.textContent = `${rows.length}/${games.length}`;
-
-    for (const g of rows) {
-      const row = document.createElement('div');
-      row.className = 'card';
-      row.style.display = 'grid';
-      row.style.gridTemplateColumns = '64px 1fr auto';
-      row.style.gap = '12px';
-
-      const img = document.createElement('img');
-      img.className = 'img-thumb';
-      img.src = g.photo || '';
-      img.alt = g.nom || '';
-
-      const info = document.createElement('div');
-      info.innerHTML = `<div style="font-weight:700">${g.nom}</div>
-        <div class="muted" style="font-size:13px;opacity:.85">
-          ${g.nbJoueurMin ?? '?'}–${g.nbJoueurMax ?? '?'} joueurs • ${g.age ?? '?'}+ • ${g.duree ?? '?'} min
-        </div>
-        <div>${(g.type||[]).map(t=>`<span class="badge">${t}</span>`).join(' ')}</div>`;
-
-      const actions = document.createElement('div');
-      actions.style.display = 'flex';
-      actions.style.gap = '8px';
-
-      const openBtn = document.createElement('button');
-      openBtn.className = 'button';
-      openBtn.textContent = 'Ouvrir';
-      openBtn.onclick = () => openModal(g);
-      actions.append(openBtn);
-      row.append(img, info, actions);
-      listEl.appendChild(row);
-    }
-  }
-
-
-  function setReadOnly(modal, readonly=true) {
-  modal.querySelectorAll('input, textarea').forEach(el=>{
-    if(el.type !== "file") el.disabled = readonly;
+  return list.filter(g => {
+    if(selected.length && !(g.type||[]).some(t => selected.includes(t))) return false;
+    return true;
   });
-  modal.querySelector('#btn-save').style.display = readonly ? 'none':'inline-flex';
-  modal.querySelector('#btn-delete').style.display = readonly ? 'none':'inline-flex';
 }
-
-
-function openModal(game = null) {
-  state.editingId = game?.id || null;
-  const modal = document.querySelector('#modal');
-  modal.showModal();
-
-  const get = id => modal.querySelector(id);
-  get('#f-nom').value = game?.nom || '';
-  get('#f-min').value = game?.nbJoueurMin ?? '';
-  get('#f-max').value = game?.nbJoueurMax ?? '';
-  get('#f-age').value = game?.age ?? '';
-  get('#f-duree').value = game?.duree ?? '';
-  get('#f-types').value = (game?.type||[]).join(', ');
-  get('#f-remarque').value = game?.remarque || '';
-  get('#f-lien').value = game?.lien || '';
-  get('#f-description').value = game?.description || '';
-  get('#preview').src = game?.photo || '';
-  get('#f-photo').value = '';
-
-  // Lecture seule au départ
-  setReadOnly(modal, true);
-
-  // Bouton Modifier
-  const btnEdit = modal.querySelector('#btn-edit');
-  btnEdit.style.display = game ? 'inline-flex' : 'none';
-  btnEdit.onclick = () => {
-    const pass = prompt("Mot de passe ?");
-    if(pass === "1664") {
-      setReadOnly(modal,false);
-    } else {
-      alert("Accès refusé.");
-    }
-  };
 
   // Supprimer (protégé aussi)
   const delBtn = modal.querySelector('#btn-delete');
@@ -198,6 +91,10 @@ function openModal(game = null) {
     games = games.filter(x => x.id !== game.id);
     await saveGames(games);
     closeModal();
+    if(document.querySelector('#filter-type')){
+      const types = Array.from(new Set(games.flatMap(g => g.type||[]))).sort((a,b)=>a.localeCompare(b));
+      document.querySelector('#filter-type').innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
     render();
   };
 }
@@ -236,6 +133,10 @@ function closeModal() {
 
     await saveGames(games);
     closeModal();
+    if(document.querySelector('#filter-type')){
+      const types = Array.from(new Set(games.flatMap(g => g.type||[]))).sort((a,b)=>a.localeCompare(b));
+      document.querySelector('#filter-type').innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
     render();
   }
 
@@ -273,6 +174,8 @@ function closeModal() {
     await load();
   const sortSelect = document.querySelector('#sort-select');
   if(sortSelect){ sortSelect.addEventListener('change', render); }
+  const filterType = document.querySelector('#filter-type');
+  if(filterType){ filterType.addEventListener('change', render); }
 
   ;[fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>{ if(el) el.addEventListener('input', render); });
     alert('Import terminé.');
@@ -329,7 +232,11 @@ async function initConsultation() {
   filtType.innerHTML = '<option value="">Tous types</option>' + types.map(t => `<option value="${t}">${t}</option>`).join('');
 
   [search, filtType, filtAge, filtMin, filtMax].forEach(el => el.addEventListener('input', render));
-  render();
+  if(document.querySelector('#filter-type')){
+      const types = Array.from(new Set(games.flatMap(g => g.type||[]))).sort((a,b)=>a.localeCompare(b));
+      document.querySelector('#filter-type').innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+    render();
 }
 
 // Router

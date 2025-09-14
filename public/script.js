@@ -47,7 +47,13 @@ async function initGestion() {
   const importBtn = document.querySelector('#btn-import');
 
   let games = [];
-  const state = { editingId: null };
+  const state = { editingId: null 
+  await load();
+  const sortSelect = document.querySelector('#sort-select');
+  if(sortSelect){ sortSelect.addEventListener('change', render); }
+  const filterType = document.querySelector('#filter-type');
+  if(filterType){ filterType.addEventListener('change', render); }
+};
 
 
   const fltSearch = document.querySelector('#flt-search');
@@ -171,7 +177,6 @@ function closeModal() {
     try { data = JSON.parse(text); } catch { alert('JSON invalide'); return; }
     if (!Array.isArray(data)) { alert('Le fichier doit contenir un tableau de jeux'); return; }
     await saveGames(data);
-    await load();
   const sortSelect = document.querySelector('#sort-select');
   if(sortSelect){ sortSelect.addEventListener('change', render); }
   const filterType = document.querySelector('#filter-type');
@@ -181,7 +186,6 @@ function closeModal() {
     alert('Import terminé.');
   };
 
-  await load();
   ;[fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>{ if(el) el.addEventListener('input', render); });
 }
 

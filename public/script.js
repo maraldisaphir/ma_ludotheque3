@@ -89,22 +89,19 @@ async function initGestion() {
     render();
   }
 
+  
   function render() {
-    listEl.innerHTML = '';
-    if (!games.length) { listEl.innerHTML = '<div class="card">Aucun jeu pour le moment. Cliquez sur <b>Ajouter</b>.</div>'; if(typeof countBadge!=='undefined'&&countBadge) countBadge.textContent = `0/0`; return; }
-    const rows = (typeof applyFilters==='function') ? applyFilters(games) : games;
-    if (typeof countBadge !== 'undefined' && countBadge) { countBadge.textContent = `${rows.length}/${games.length}`; }
-    for (const g of rows) {
-
     listEl.innerHTML = '';
     if (!games.length) {
       listEl.innerHTML = '<div class="card">Aucun jeu pour le moment. Cliquez sur <b>Ajouter</b>.</div>';
+      if (countBadge) countBadge.textContent = `0/0`;
       return;
-    
     }
-}
 
-    for (const g of games) {
+    const rows = applyFilters(games);
+    if (countBadge) countBadge.textContent = `${rows.length}/${games.length}`;
+
+    for (const g of rows) {
       const row = document.createElement('div');
       row.className = 'card';
       row.style.display = 'grid';
@@ -137,6 +134,7 @@ async function initGestion() {
       listEl.appendChild(row);
     }
   }
+
 
   function openModal(game = null) {
     state.editingId = game?.id || null;

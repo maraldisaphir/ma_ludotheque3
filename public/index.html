@@ -11,21 +11,16 @@
     <div class="header">
       <h1>🎲 Ludothèque — Gestion</h1>
       <div style="display:flex; gap:8px"><button id="btn-filters" class="button ghost">☰ Filtres</button>
-        
-        
-        
-        
         <button id="btn-add" class="button ok">Ajouter</button>
       </div>
     </div>
 
     <div id="games-list" class="grid"></div>
-<div class="import-export-bar">
-  <button id="btn-import" class="button">Importer JSON</button>
-  <input id="import-input" type="file" accept="application/json" style="display:none">
-  <button id="btn-export" class="button">Exporter JSON</button>
-</div>
-
+    <div class="import-export-bar">
+      <button id="btn-import" class="button">Importer JSON</button>
+      <input id="import-input" type="file" accept="application/json" style="display:none">
+      <button id="btn-export" class="button">Exporter JSON</button>
+    </div>
 
     <footer>
       Stockage : <b>Netlify Blobs</b> • Zéro localStorage • Thème néon/pastel.
@@ -96,34 +91,33 @@
         <textarea id="f-description" class="input" rows="4"></textarea>
       </div>
 
-      
       <div style="display:flex; justify-content:space-between; margin-top:6px">
         <button id="btn-delete" class="button danger" style="display:none">Supprimer</button>
         <div style="display:flex; gap:8px; justify-content:flex-end">
-          <button id="btn-cancel" class="button ghost">Annuler</button>
-          <button class="button ok" type="submit">Enregistrer</button>
+          <button id="btn-edit" class="button" style="display:none">Modifier</button>
+          <button id="btn-cancel" class="button ghost">Fermer</button>
+          <button class="button ok" type="submit" id="btn-save" style="display:none">Enregistrer</button>
         </div>
       </div>
-    
     </form>
   </dialog>
 
   <script src="./script.js"></script>
 
-<div id="overlay" class="overlay" style="display:none"></div>
-<div id="filter-drawer" class="drawer">
-  <div class="drawer-header">
-    <h3 style="margin:0">Filtres <span id="filter-count" class="badge" style="font-size:12px; margin-left:6px;">0/0</span></h3>
-    <button id="btn-close-drawer" class="button ghost">Fermer</button>
+  <div id="overlay" class="overlay" style="display:none"></div>
+  <div id="filter-drawer" class="drawer">
+    <div class="drawer-header">
+      <h3 style="margin:0">Filtres <span id="filter-count" class="badge" style="font-size:12px; margin-left:6px;">0/0</span></h3>
+      <button id="btn-close-drawer" class="button ghost">Fermer</button>
+    </div>
+    <div class="drawer-content">
+      <input id="flt-search" class="input small" placeholder="Contient…">
+      <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
+      <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
+      <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
+      <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
+    </div>
   </div>
-  <div class="drawer-content">
-    <input id="flt-search" class="input small" placeholder="Contient…">
-    <input id="flt-age" class="input small" type="number" min="0" placeholder="Âge min">
-    <input id="flt-min" class="input small" type="number" min="1" placeholder="Joueurs min">
-    <input id="flt-max" class="input small" type="number" min="1" placeholder="Joueurs max">
-    <input id="flt-duree" class="input small" type="number" min="1" placeholder="Durée max">
-  </div>
-</div>
 
 </body>
 </html>

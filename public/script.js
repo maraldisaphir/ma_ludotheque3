@@ -68,23 +68,21 @@ async function initGestion() {
   if(overlay) overlay.onclick = closeDrawer;
 
   function applyFilters(list) {
-  const q = (fltSearch?.value || '').toLowerCase().trim();
-  const age = parseInt(fltAge?.value || '0', 10) || 0;
-  const minP = parseInt(fltMin?.value || '0', 10) || 0;
-  const maxP = parseInt(fltMax?.value || '0', 10) || 0;
-  const duree = parseInt(fltDuree?.value || '0', 10) || 0;
+    const q = (fltSearch?.value||'').toLowerCase();
+    const age = parseInt(fltAge?.value||'0',10) || 0;
+    const minP = parseInt(fltMin?.value||'0',10) || 0;
+    const maxP = parseInt(fltMax?.value||'0',10) || 0;
+    const duree = parseInt(fltDuree?.value||'0',10) || 0;
 
-  return list.filter(g => {
-    const hay = `${g.nom || ''} ${g.description || ''} ${g.remarque || ''}`.toLowerCase();
-    const matchesQ = !q || hay.split(/\s+/).some(w => w === q);
-    const matchesAge = !age || (g.age || 0) >= age;
-    const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
-    const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
-    const matchesDur = !duree || (g.duree || 9999) <= duree;
-    return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
-  });
-}
-
+    return list.filter(g=>{
+      const matchesQ = !q || (g.nom+" "+g.description+" "+g.remarque).toLowerCase().includes(q);
+      const matchesAge = !age || (g.age||0) >= age;
+      const matchesMin = !minP || ((g.nbJoueurMin||0) <= minP && (g.nbJoueurMax||0) >= minP);
+      const matchesMax = !maxP || ((g.nbJoueurMin||0) <= maxP && (g.nbJoueurMax||0) >= maxP);
+      const matchesDur = !duree || (g.duree||9999) <= duree;
+      return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
+    });
+  }
 
   async function load() {
     games = await fetchGames();
@@ -126,53 +124,75 @@ async function initGestion() {
       actions.style.display = 'flex';
       actions.style.gap = '8px';
 
-      const edit = document.createElement('button');
-      edit.className = 'button';
-      edit.textContent = 'Modifier';
-      edit.onclick = () => openModal(g);
-
-      actions.append(edit);
+      const openBtn = document.createElement('button');
+      openBtn.className = 'button';
+      openBtn.textContent = 'Ouvrir';
+      openBtn.onclick = () => openModal(g);
+      actions.append(openBtn);
       row.append(img, info, actions);
       listEl.appendChild(row);
     }
   }
 
 
-  function openModal(game = null) {
-    state.editingId = game?.id || null;
-    const modal = document.querySelector('#modal');
-    modal.showModal();
+  function setReadOnly(modal, readonly=true) {
+  modal.querySelectorAll('input, textarea').forEach(el=>{
+    if(el.type !== "file") el.disabled = readonly;
+  });
+  modal.querySelector('#btn-save').style.display = readonly ? 'none':'inline-flex';
+  modal.querySelector('#btn-delete').style.display = readonly ? 'none':'inline-flex';
+}
 
-    const get = id => modal.querySelector(id);
-    get('#f-nom').value = game?.nom || '';
-    get('#f-min').value = game?.nbJoueurMin ?? '';
-    get('#f-max').value = game?.nbJoueurMax ?? '';
-    get('#f-age').value = game?.age ?? '';
-    get('#f-duree').value = game?.duree ?? '';
-    get('#f-types').value = (game?.type||[]).join(', ');
-    get('#f-remarque').value = game?.remarque || '';
-    get('#f-lien').value = game?.lien || '';
-    get('#f-description').value = game?.description || '';
-    get('#preview').src = game?.photo || '';
-    get('#f-photo').value = '';
-    const delBtn = modal.querySelector('#btn-delete');
-    if (game) {
-      delBtn.style.display = 'inline-flex';
-      delBtn.onclick = async () => {
-        if (!confirm(`Supprimer "${game.nom}" ?`)) return;
-        games = games.filter(x => x.id !== game.id);
-        await saveGames(games);
-        closeModal();
-        render();
-      };
+
+function openModal(game = null) {
+  state.editingId = game?.id || null;
+  const modal = document.querySelector('#modal');
+  modal.showModal();
+
+  const get = id => modal.querySelector(id);
+  get('#f-nom').value = game?.nom || '';
+  get('#f-min').value = game?.nbJoueurMin ?? '';
+  get('#f-max').value = game?.nbJoueurMax ?? '';
+  get('#f-age').value = game?.age ?? '';
+  get('#f-duree').value = game?.duree ?? '';
+  get('#f-types').value = (game?.type||[]).join(', ');
+  get('#f-remarque').value = game?.remarque || '';
+  get('#f-lien').value = game?.lien || '';
+  get('#f-description').value = game?.description || '';
+  get('#preview').src = game?.photo || '';
+  get('#f-photo').value = '';
+
+  // Lecture seule au départ
+  setReadOnly(modal, true);
+
+  // Bouton Modifier
+  const btnEdit = modal.querySelector('#btn-edit');
+  btnEdit.style.display = game ? 'inline-flex' : 'none';
+  btnEdit.onclick = () => {
+    const pass = prompt("Mot de passe ?");
+    if(pass === "1664") {
+      setReadOnly(modal,false);
     } else {
-      delBtn.style.display = 'none';
-      delBtn.onclick = null;
+      alert("Accès refusé.");
     }
+  };
 
-  }
-
-  function closeModal() {
+  // Supprimer (protégé aussi)
+  const delBtn = modal.querySelector('#btn-delete');
+  delBtn.onclick = async () => {
+    const pass = prompt("Mot de passe ?");
+    if(pass !== "1664") {
+      alert("Accès refusé.");
+      return;
+    }
+    if (!confirm(`Supprimer "${game.nom}" ?`)) return;
+    games = games.filter(x => x.id !== game.id);
+    await saveGames(games);
+    closeModal();
+    render();
+  };
+}
+function closeModal() {
     document.querySelector('#modal').close();
   }
 
@@ -260,16 +280,11 @@ async function initConsultation() {
     const maxP = parseInt(filtMax.value || '0', 10) || 0;
 
     const rows = games.filter(g => {
-      const safeQ = q.replace(/[.*+?^${}()|[\]\]/g, "\$&");
-    const regex = new RegExp("(^|\s)" + safeQ + "(\s|$)", "i");
-const matchesQ = !q || (g.nom + " " + g.description + " " + g.remarque)
-      .toLowerCase()
-      .split(/\s+/)
-      .some(word => word === q.toLowerCase());
+      const matchesQ = !q || [g.nom, g.description, g.remarque, (g.type||[]).join(' ')].join(' ').toLowerCase().includes(q);
       const matchesType = !fType || (g.type||[]).some(t => t.toLowerCase() === fType.toLowerCase());
       const matchesAge = !fAge || (g.age || 0) >= fAge;
-      const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
-      const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
+      const matchesMin = !minP || (g.nbJoueurMin || 0) <= minP && (g.nbJoueurMax || 0) >= minP;
+      const matchesMax = !maxP || (g.nbJoueurMin || 0) <= maxP && (g.nbJoueurMax || 0) >= maxP;
       return matchesQ && matchesType && matchesAge && matchesMin && matchesMax;
     });
 

@@ -75,10 +75,10 @@ async function initGestion() {
     const duree = parseInt(fltDuree?.value||'0',10) || 0;
 
     return list.filter(g=>{
-      const matchesQ = !q || (g.nom+" "+g.description+" "+g.remarque).toLowerCase().includes(q);
+      const matchesQ = !q || new RegExp("\b" + q.replace(/[.*+?^${}()|[\]\]/g, "\$&") + "\b", "i").test((g.nom+" "+g.description+" "+g.remarque));
       const matchesAge = !age || (g.age||0) >= age;
-      const matchesMin = !minP || ((g.nbJoueurMin||0) <= minP && (g.nbJoueurMax||0) >= minP);
-      const matchesMax = !maxP || ((g.nbJoueurMin||0) <= maxP && (g.nbJoueurMax||0) >= maxP);
+      const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
+      const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
       const matchesDur = !duree || (g.duree||9999) <= duree;
       return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
     });
@@ -258,11 +258,11 @@ async function initConsultation() {
     const maxP = parseInt(filtMax.value || '0', 10) || 0;
 
     const rows = games.filter(g => {
-      const matchesQ = !q || [g.nom, g.description, g.remarque, (g.type||[]).join(' ')].join(' ').toLowerCase().includes(q);
+      const matchesQ = !q || new RegExp("\b" + q.replace(/[.*+?^${}()|[\]\]/g, "\$&") + "\b", "i").test((g.nom+" "+g.description+" "+g.remarque));
       const matchesType = !fType || (g.type||[]).some(t => t.toLowerCase() === fType.toLowerCase());
       const matchesAge = !fAge || (g.age || 0) >= fAge;
-      const matchesMin = !minP || (g.nbJoueurMin || 0) <= minP && (g.nbJoueurMax || 0) >= minP;
-      const matchesMax = !maxP || (g.nbJoueurMin || 0) <= maxP && (g.nbJoueurMax || 0) >= maxP;
+      const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
+      const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
       return matchesQ && matchesType && matchesAge && matchesMin && matchesMax;
     });
 

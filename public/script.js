@@ -68,26 +68,23 @@ async function initGestion() {
   if(overlay) overlay.onclick = closeDrawer;
 
   function applyFilters(list) {
-    const q = (fltSearch?.value||'').toLowerCase();
-    const age = parseInt(fltAge?.value||'0',10) || 0;
-    const minP = parseInt(fltMin?.value||'0',10) || 0;
-    const maxP = parseInt(fltMax?.value||'0',10) || 0;
-    const duree = parseInt(fltDuree?.value||'0',10) || 0;
+  const q = (fltSearch?.value || '').toLowerCase().trim();
+  const age = parseInt(fltAge?.value || '0', 10) || 0;
+  const minP = parseInt(fltMin?.value || '0', 10) || 0;
+  const maxP = parseInt(fltMax?.value || '0', 10) || 0;
+  const duree = parseInt(fltDuree?.value || '0', 10) || 0;
 
-    return list.filter(g=>{
-      const safeQ = q.replace(/[.*+?^${}()|[\]\]/g, "\$&");
-    const regex = new RegExp("(^|\s)" + safeQ + "(\s|$)", "i");
-const matchesQ = !q || (g.nom + " " + g.description + " " + g.remarque)
-      .toLowerCase()
-      .split(/\s+/)
-      .some(word => word === q.toLowerCase());
-      const matchesAge = !age || (g.age||0) >= age;
-      const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
-      const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
-      const matchesDur = !duree || (g.duree||9999) <= duree;
-      return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
-    });
-  }
+  return list.filter(g => {
+    const hay = `${g.nom || ''} ${g.description || ''} ${g.remarque || ''}`.toLowerCase();
+    const matchesQ = !q || hay.split(/\s+/).some(w => w === q);
+    const matchesAge = !age || (g.age || 0) >= age;
+    const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
+    const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
+    const matchesDur = !duree || (g.duree || 9999) <= duree;
+    return matchesQ && matchesAge && matchesMin && matchesMax && matchesDur;
+  });
+}
+
 
   async function load() {
     games = await fetchGames();

@@ -46,8 +46,8 @@ async function initGestion() {
   const exportBtn = document.querySelector('#btn-export');
   const importInput = document.querySelector('#import-input');
   const importBtn = document.querySelector('#btn-import');
-  const sortSelect = document.querySelector('#sort-select');
   const filterType = document.querySelector('#filter-type');
+  const searchName = document.querySelector('#search-name');
 
   let games = [];
   const state = { editingId: null };
@@ -61,12 +61,17 @@ async function initGestion() {
   }
 
   function applyFilters(list) {
+    // Multi-type filter
     let selected = [];
     if (filterType) {
       selected = Array.from(filterType.selectedOptions).map(o => o.value);
     }
+    // Name search (substring, case-insensitive, consecutive)
+    const q = (searchName?.value || '').toLowerCase();
+
     return list.filter(g => {
       if (selected.length && !(g.type || []).some(t => selected.includes(t))) return false;
+      if (q && !(g.nom || '').toLowerCase().includes(q)) return false;
       return true;
     });
   }
@@ -92,16 +97,6 @@ async function initGestion() {
     }
 
     let rows = applyFilters(games);
-
-    // Tri
-    const sortBy = sortSelect?.value || 'nom';
-    rows.sort((a, b) => {
-      if (sortBy === 'nom') return (a.nom || '').localeCompare(b.nom || '');
-      if (sortBy === 'type') return ((a.type || []).join(',') || '').localeCompare((b.type || []).join(',') || '');
-      if (sortBy === 'age') return (a.age || 0) - (b.age || 0);
-      if (sortBy === 'duree') return (a.duree || 0) - (b.duree || 0);
-      return 0;
-    });
 
     for (const g of rows) {
       const row = document.createElement('div');
@@ -260,11 +255,11 @@ async function initGestion() {
 
   await load();
 
-  if (sortSelect) sortSelect.addEventListener('change', render);
   if (filterType) filterType.addEventListener('change', render);
+  if (searchName) searchName.addEventListener('input', render);
 }
 
-// --- Consultation Page Logic ---
+// --- Consultation Page Logic --- (inchangé / pas utilisé ici)
 async function initConsultation() {
   const tableBody = document.querySelector('#tbody');
   const search = document.querySelector('#search');

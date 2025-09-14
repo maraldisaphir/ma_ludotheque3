@@ -77,7 +77,10 @@ async function initGestion() {
     return list.filter(g=>{
       const safeQ = q.replace(/[.*+?^${}()|[\]\]/g, "\$&");
     const regex = new RegExp("(^|\s)" + safeQ + "(\s|$)", "i");
-    const matchesQ = !q || regex.test((g.nom + " " + g.description + " " + g.remarque));
+const matchesQ = !q || (g.nom + " " + g.description + " " + g.remarque)
+      .toLowerCase()
+      .split(/\s+/)
+      .some(word => word === q.toLowerCase());
       const matchesAge = !age || (g.age||0) >= age;
       const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;
       const matchesMax = !maxP || (g.nbJoueurMax ?? 9999) <= maxP;
@@ -262,7 +265,10 @@ async function initConsultation() {
     const rows = games.filter(g => {
       const safeQ = q.replace(/[.*+?^${}()|[\]\]/g, "\$&");
     const regex = new RegExp("(^|\s)" + safeQ + "(\s|$)", "i");
-    const matchesQ = !q || regex.test((g.nom + " " + g.description + " " + g.remarque));
+const matchesQ = !q || (g.nom + " " + g.description + " " + g.remarque)
+      .toLowerCase()
+      .split(/\s+/)
+      .some(word => word === q.toLowerCase());
       const matchesType = !fType || (g.type||[]).some(t => t.toLowerCase() === fType.toLowerCase());
       const matchesAge = !fAge || (g.age || 0) >= fAge;
       const matchesMin = !minP || (g.nbJoueurMin ?? 0) >= minP;

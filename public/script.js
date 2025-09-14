@@ -99,6 +99,15 @@ async function initGestion() {
     }
 
     const rows = applyFilters(games);
+    const sortBy = document.querySelector('#sort-select')?.value || 'nom';
+    rows.sort((a,b)=>{
+      if(sortBy === 'nom') return (a.nom||'').localeCompare(b.nom||'');
+      if(sortBy === 'type') return ((a.type||[])[0]||'').localeCompare(((b.type||[])[0]||''));
+      if(sortBy === 'age') return (a.age||0) - (b.age||0);
+      if(sortBy === 'duree') return (a.duree||0) - (b.duree||0);
+      return 0;
+    });
+
     if (countBadge) countBadge.textContent = `${rows.length}/${games.length}`;
 
     for (const g of rows) {
@@ -231,7 +240,16 @@ function closeModal() {
   }
 
   // wire up
-  addBtn.onclick = () => openModal(null);
+  addBtn.onclick = () => {
+    const pass = prompt("Mot de passe ?");
+    if(pass === "1664") {
+      openModal(null);
+      const modal = document.querySelector('#modal');
+      setReadOnly(modal,false);
+    } else {
+      alert("Accès refusé.");
+    }
+  };
   document.querySelector('#modal-form').addEventListener('submit', submitModal);
   document.querySelector('#btn-cancel').onclick = e => { e.preventDefault(); document.querySelector('#modal').close(); };
   document.querySelector('#f-photo').addEventListener('change', async (e) => {
@@ -253,6 +271,8 @@ function closeModal() {
     if (!Array.isArray(data)) { alert('Le fichier doit contenir un tableau de jeux'); return; }
     await saveGames(data);
     await load();
+  document.querySelector('#sort-select')?.addEventListener('change', render);
+
   ;[fltSearch, fltAge, fltMin, fltMax, fltDuree].forEach(el=>{ if(el) el.addEventListener('input', render); });
     alert('Import terminé.');
   };

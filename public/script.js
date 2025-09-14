@@ -102,7 +102,7 @@ async function initGestion() {
     const sortBy = document.querySelector('#sort-select')?.value || 'nom';
     rows.sort((a,b)=>{
       if(sortBy === 'nom') return (a.nom||'').localeCompare(b.nom||'');
-      if(sortBy === 'type') return ((a.type||[])[0]||'').localeCompare(((b.type||[])[0]||''));
+      if(sortBy === 'type') return ((a.type||[]).join(',')||'').localeCompare((b.type||[]).join(',')||'');
       if(sortBy === 'age') return (a.age||0) - (b.age||0);
       if(sortBy === 'duree') return (a.duree||0) - (b.duree||0);
       return 0;

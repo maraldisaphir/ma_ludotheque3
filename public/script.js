@@ -76,7 +76,7 @@ class TagsInput {
     this.values.forEach(v => {
       const tag = document.createElement('div');
       tag.className = 'tag';
-      tag.innerHTML = `${v} <button type="button">✕</button>`;
+      tag.innerHTML = v + ' <button type="button">✕</button>';
       tag.querySelector('button').onclick = () => this.remove(v);
       this.container.appendChild(tag);
     });

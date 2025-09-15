@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ludothèque de Saphir</title>
+  <title>Ludothèque – Gestion</title>
   <link rel="stylesheet" href="./style.css">
-  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 </head>
 <body data-page="gestion">
   <div class="container">
     <div class="header">
-      <h1>🎲 Ludothèque de Saphir</h1>
+      <h1>🎲 Ludothèque — Gestion</h1>
       <div class="actions">
         <select id="filter-type" class="input small" multiple></select>
-        <input id="search-name" class="input small" placeholder="Rechercher par nom…">
+        <select id="sort-select" class="input small">
+          <option value="nom">Nom</option>
+          <option value="type">Type</option>
+          <option value="age">Âge</option>
+          <option value="duree">Durée</option>
+        </select>
         <button id="btn-add" class="button ok">Ajouter</button>
       </div>
     </div>
@@ -71,8 +74,7 @@
       <div class="row">
         <div>
           <label>Lien URL (fiche / avis)</label>
-          <input id="f-lien" class="input" type="url" placeholder="https://..." style="width:100%">
-          <a id="f-lien-preview" href="#" target="_blank" style="display:none; font-size:13px; color:var(--accent); margin-top:4px; text-decoration:underline;">Ouvrir le lien</a>
+          <input id="f-lien" class="input" type="url" placeholder="https://...">
         </div>
         <div>
           <label>Photo (PNG/JPG)</label>

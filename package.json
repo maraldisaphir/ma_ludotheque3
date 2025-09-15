@@ -1,7 +1,12 @@
 {
   "name": "ludotheque",
-  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Static site'"
+  },
   "dependencies": {
-    "@netlify/blobs": "^4.0.0"
+    "@netlify/blobs": "^7.0.0"
   }
 }

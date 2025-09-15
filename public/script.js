@@ -1,11 +1,9 @@
 
 const API_URL = '/.netlify/functions/games';
-const uuid = () => crypto.randomUUID();
-
-let tsTypes;
-let allTypes = [];
 
 // --- Utilities ---
+const uuid = () => crypto.randomUUID();
+
 async function fetchGames() {
   const res = await fetch(API_URL, { method: 'GET' });
   if (!res.ok) throw new Error('GET failed');
@@ -41,22 +39,6 @@ function download(filename, text) {
   URL.revokeObjectURL(url);
 }
 
-// --- Tom Select Init ---
-function initTomSelect(selected = []) {
-  const el = document.querySelector("#f-types");
-  if (!el) return;
-  if (tsTypes) tsTypes.destroy();
-  tsTypes = new TomSelect(el, {
-    options: allTypes.map(t => ({ value: t, text: t })),
-    items: selected,
-    create: true,
-    persist: false,
-    plugins: ['remove_button'],
-    maxItems: null,
-    placeholder: "Choisir ou saisir..."
-  });
-}
-
 // --- Gestion Page Logic ---
 async function initGestion() {
   const listEl = document.querySelector('#games-list');
@@ -64,26 +46,17 @@ async function initGestion() {
   const exportBtn = document.querySelector('#btn-export');
   const importInput = document.querySelector('#import-input');
   const importBtn = document.querySelector('#btn-import');
+  const sortSelect = document.querySelector('#sort-select');
   const filterType = document.querySelector('#filter-type');
-  const searchName = document.querySelector('#search-name');
 
   let games = [];
   const state = { editingId: null };
 
   function setReadOnly(modal, readonly = true) {
-    modal.querySelectorAll('input, textarea, select').forEach(el => {
+    modal.querySelectorAll('input, textarea').forEach(el => {
       if (el.type !== "file") el.disabled = readonly;
     });
     modal.querySelector('#btn-save').style.display = readonly ? 'none' : 'inline-flex';
-  if (tsTypes) {
-    if (readonly) {
-      console.log("Mode lecture seule");
-      tsTypes.disable();
-    } else {
-      console.log("Mode édition");
-      tsTypes.enable();
-    }
-  }
     modal.querySelector('#btn-delete').style.display = readonly ? 'none' : 'inline-flex';
   }
 
@@ -92,21 +65,22 @@ async function initGestion() {
     if (filterType) {
       selected = Array.from(filterType.selectedOptions).map(o => o.value);
     }
-    const q = (searchName?.value || '').toLowerCase();
-
     return list.filter(g => {
       if (selected.length && !(g.type || []).some(t => selected.includes(t))) return false;
-      if (q && !(g.nom || '').toLowerCase().includes(q)) return false;
       return true;
     });
   }
 
   async function load() {
     games = await fetchGames();
-    allTypes = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a, b) => a.localeCompare(b));
+
+    // remplir les types uniques dans filterType
     if (filterType) {
-      filterType.innerHTML = allTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+      const types = Array.from(new Set(games.flatMap(g => g.type || [])))
+        .sort((a, b) => a.localeCompare(b));
+      filterType.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
     }
+
     render();
   }
 
@@ -116,7 +90,19 @@ async function initGestion() {
       listEl.innerHTML = '<div class="card">Aucun jeu pour le moment. Cliquez sur <b>Ajouter</b>.</div>';
       return;
     }
+
     let rows = applyFilters(games);
+
+    // Tri
+    const sortBy = sortSelect?.value || 'nom';
+    rows.sort((a, b) => {
+      if (sortBy === 'nom') return (a.nom || '').localeCompare(b.nom || '');
+      if (sortBy === 'type') return ((a.type || []).join(',') || '').localeCompare((b.type || []).join(',') || '');
+      if (sortBy === 'age') return (a.age || 0) - (b.age || 0);
+      if (sortBy === 'duree') return (a.duree || 0) - (b.duree || 0);
+      return 0;
+    });
+
     for (const g of rows) {
       const row = document.createElement('div');
       row.className = 'card';
@@ -162,32 +148,17 @@ async function initGestion() {
     get('#f-max').value = game?.nbJoueurMax ?? '';
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
-
-    setTimeout(() => initTomSelect(game?.type || []), 0);
-
+    get('#f-types').value = (game?.type || []).join(', ');
     get('#f-remarque').value = game?.remarque || '';
-    const lienInput = get('#f-lien');
-    const lienPreview = get('#f-lien-preview');
-    lienInput.value = game?.lien || '';
-    if (game?.lien) {
-      lienPreview.href = game.lien;
-      lienPreview.style.display = 'inline';
-    } else {
-      lienPreview.style.display = 'none';
-    }
-    lienInput.oninput = () => {
-      if (lienInput.value.trim()) {
-        lienPreview.href = lienInput.value.trim();
-        lienPreview.style.display = 'inline';
-      } else {
-        lienPreview.style.display = 'none';
-      }
-    };
+    get('#f-lien').value = game?.lien || '';
     get('#f-description').value = game?.description || '';
     get('#preview').src = game?.photo || '';
     get('#f-photo').value = '';
+
+    // Lecture seule au départ
     setReadOnly(modal, true);
 
+    // Bouton Modifier
     const btnEdit = modal.querySelector('#btn-edit');
     btnEdit.style.display = game ? 'inline-flex' : 'none';
     btnEdit.onclick = () => {
@@ -199,6 +170,7 @@ async function initGestion() {
       }
     };
 
+    // Supprimer (protégé aussi)
     const delBtn = modal.querySelector('#btn-delete');
     delBtn.onclick = async () => {
       const pass = prompt("Mot de passe ?");
@@ -236,7 +208,7 @@ async function initGestion() {
       nbJoueurMax: parseInt(get('#f-max').value || '0', 10) || null,
       age: parseInt(get('#f-age').value || '0', 10) || null,
       duree: parseInt(get('#f-duree').value || '0', 10) || null,
-      type: tsTypes ? tsTypes.getValue() : [],
+      type: get('#f-types').value.split(',').map(s => s.trim()).filter(Boolean),
       remarque: get('#f-remarque').value.trim(),
       photo: photoDataUrl || '',
       lien: get('#f-lien').value.trim(),
@@ -245,11 +217,13 @@ async function initGestion() {
 
     const idx = games.findIndex(x => x.id === game.id);
     if (idx >= 0) games[idx] = game; else games.unshift(game);
+
     await saveGames(games);
     closeModal();
     render();
   }
 
+  // wire up
   addBtn.onclick = () => {
     const pass = prompt("Mot de passe ?");
     if (pass === "1664") {
@@ -285,12 +259,63 @@ async function initGestion() {
   };
 
   await load();
+
+  if (sortSelect) sortSelect.addEventListener('change', render);
   if (filterType) filterType.addEventListener('change', render);
-  if (searchName) searchName.addEventListener('input', render);
+}
+
+// --- Consultation Page Logic ---
+async function initConsultation() {
+  const tableBody = document.querySelector('#tbody');
+  const search = document.querySelector('#search');
+  const filtType = document.querySelector('#f-type');
+  const filtAge = document.querySelector('#f-age');
+  const filtMin = document.querySelector('#f-min');
+  const filtMax = document.querySelector('#f-max');
+
+  let games = await fetchGames();
+
+  function render() {
+    const q = (search.value || '').toLowerCase();
+    const fType = filtType.value || '';
+    const fAge = parseInt(filtAge.value || '0', 10) || 0;
+    const minP = parseInt(filtMin.value || '0', 10) || 0;
+    const maxP = parseInt(filtMax.value || '0', 10) || 0;
+
+    const rows = games.filter(g => {
+      const matchesQ = !q || [g.nom, g.description, g.remarque, (g.type || []).join(' ')].join(' ').toLowerCase().includes(q);
+      const matchesType = !fType || (g.type || []).some(t => t.toLowerCase() === fType.toLowerCase());
+      const matchesAge = !fAge || (g.age || 0) >= fAge;
+      const matchesMin = !minP || (g.nbJoueurMin || 0) <= minP && (g.nbJoueurMax || 0) >= minP;
+      const matchesMax = !maxP || (g.nbJoueurMin || 0) <= maxP && (g.nbJoueurMax || 0) >= maxP;
+      return matchesQ && matchesType && matchesAge && matchesMin && matchesMax;
+    });
+
+    tableBody.innerHTML = rows.map(g => `
+      <tr>
+        <td><img class="img-thumb" src="${g.photo || ''}" alt="${g.nom || ''}"></td>
+        <td><div style="font-weight:700">${g.nom}</div>
+            <div style="font-size:12px; opacity:.85">${g.description ? g.description : ''}</div>
+            ${g.lien ? `<div style="margin-top:6px"><a href="${g.lien}" target="_blank" rel="noopener">Lien</a></div>` : ''}
+        </td>
+        <td>${g.nbJoueurMin ?? '?'}–${g.nbJoueurMax ?? '?'}</td>
+        <td>${g.age ?? '?'}</td>
+        <td>${g.duree ?? '?'}</td>
+        <td>${(g.type || []).map(t => `<span class="badge">${t}</span>`).join(' ')}</td>
+      </tr>
+    `).join('');
+  }
+
+  const types = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a, b) => a.localeCompare(b));
+  filtType.innerHTML = '<option value="">Tous types</option>' + types.map(t => `<option value="${t}">${t}</option>`).join('');
+
+  [search, filtType, filtAge, filtMin, filtMax].forEach(el => el.addEventListener('input', render));
+  render();
 }
 
 // Router
 document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
   if (page === 'gestion') initGestion().catch(err => alert(err.message));
+  if (page === 'consultation') initConsultation().catch(err => alert(err.message));
 });

@@ -42,10 +42,20 @@ function download(filename, text) {
 // --- TagsInput component ---
 // --- Tom Select ---
 let tsTypes;
-function initTomSelect(knownTypes, selected=[]) {
+function initTomSelect(knownTypes, selected = []) {
+  const el = document.querySelector("#f-types");
+  if (!el) return; // sécurité si l'élément n'existe pas encore
+
   if (tsTypes) tsTypes.destroy();
-  tsTypes = new TomSelect("#f-types", {
-    options: knownTypes.map(t => ({value:t, text:t})),
+  tsTypes = new TomSelect(el, {
+    options: knownTypes.map(t => ({ value: t, text: t })),
+    items: selected,
+    create: true,
+    persist: false,
+    plugins: ['remove_button'],
+    maxItems: null,
+  });
+})),
     items: selected,
     create: true,
     persist: false,

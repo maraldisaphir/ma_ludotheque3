@@ -1,5 +1,7 @@
 import { getStore } from '@netlify/blobs';
 
+console.log("➡️ games.js chargé");
+
 export async function handler(event, context) {
   console.log("➡️ Function games appelée, méthode:", event.httpMethod);
   const store = getStore({ name: "ludotheque" });

@@ -39,6 +39,60 @@ function download(filename, text) {
   URL.revokeObjectURL(url);
 }
 
+// --- TagsInput component ---
+class TagsInput {
+  constructor(container, knownTypes = []) {
+    this.container = container;
+    this.values = [];
+    this.knownTypes = knownTypes;
+    this.render();
+  }
+  normalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+  setValues(arr) {
+    this.values = arr.map(v => this.normalize(v));
+    this.render();
+  }
+  getValues() { return this.values; }
+  add(value) {
+    const val = this.normalize(value);
+    if (val && !this.values.includes(val)) {
+      this.values.push(val);
+      this.render();
+    }
+  }
+  remove(value) {
+    this.values = this.values.filter(v => v !== value);
+    this.render();
+  }
+  render() {
+    this.container.innerHTML = '';
+    this.values.forEach(v => {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = v + ' <button type="button">✕</button>';
+      tag.querySelector('button').onclick = () => this.remove(v);
+      this.container.appendChild(tag);
+    });
+    const addBtn = document.createElement('div');
+    addBtn.className = 'tag-add';
+    addBtn.textContent = '+';
+    addBtn.onclick = () => this.openSelector();
+    this.container.appendChild(addBtn);
+  }
+  openSelector() {
+    const choix = prompt("Tape un type existant ou nouveau :
+" + this.knownTypes.join(', '));
+    if (choix) this.add(choix.trim());
+  }
+  updateKnownTypes(types) {
+    this.knownTypes = types;
+  }
+}
+
+
 // --- Gestion Page Logic ---
 async function initGestion() {
   const listEl = document.querySelector('#games-list');
@@ -51,6 +105,7 @@ async function initGestion() {
 
   let games = [];
   const state = { editingId: null };
+  let tagsInput;
 
   function setReadOnly(modal, readonly = true) {
     modal.querySelectorAll('input, textarea').forEach(el => {
@@ -84,10 +139,7 @@ async function initGestion() {
       const types = Array.from(new Set(games.flatMap(g => g.type || [])))
         .sort((a, b) => a.localeCompare(b));
       filterType.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
-      const typeDatalist = document.querySelector('#types-list');
-      if (typeDatalist) {
-        typeDatalist.innerHTML = types.map(t => `<option value="${t}">`).join('');
-      }
+      if (!tagsInput) { tagsInput = new TagsInput(document.querySelector('#f-types-container'), types); } else { tagsInput.updateKnownTypes(types); }
     }
 
     render();
@@ -147,7 +199,7 @@ async function initGestion() {
     get('#f-max').value = game?.nbJoueurMax ?? '';
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
-    get('#f-types').value = (game?.type || []).join(', ');
+    if (tagsInput) tagsInput.setValues(game?.type || []);
     get('#f-remarque').value = game?.remarque || '';
     const lienInput = get('#f-lien');
     const lienPreview = get('#f-lien-preview');
@@ -223,7 +275,7 @@ async function initGestion() {
       nbJoueurMax: parseInt(get('#f-max').value || '0', 10) || null,
       age: parseInt(get('#f-age').value || '0', 10) || null,
       duree: parseInt(get('#f-duree').value || '0', 10) || null,
-      type: get('#f-types').value.split(',').map(s => s.trim()).filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()),
+      type: tagsInput ? tagsInput.getValues() : [],
       remarque: get('#f-remarque').value.trim(),
       photo: photoDataUrl || '',
       lien: get('#f-lien').value.trim(),

@@ -198,7 +198,21 @@ async function initGestion() {
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
     const types = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a,b)=>a.localeCompare(b));
-    setTimeout(() => initTomSelect(types, game?.type || []), 0);
+    
+    const types = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a,b)=>a.localeCompare(b));
+    setTimeout(() => {
+      if (window.tsTypes) tsTypes.destroy();
+      tsTypes = new TomSelect("#f-types", {
+        options: types.map(t => ({ value: t, text: t })),
+        items: game?.type || [],
+        create: true,
+        persist: false,
+        plugins: ['remove_button'],
+        maxItems: null,
+        placeholder: "Choisir ou saisir..."
+      });
+    }, 0);
+
     get('#f-remarque').value = game?.remarque || '';
     const lienInput = get('#f-lien');
     const lienPreview = get('#f-lien-preview');

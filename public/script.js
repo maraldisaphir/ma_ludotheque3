@@ -101,7 +101,7 @@ async function initGestion() {
       const types = Array.from(new Set(games.flatMap(g => g.type || [])))
         .sort((a, b) => a.localeCompare(b));
       filterType.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
-      initTomSelect(types);
+      // initTomSelect(types); (déplacé dans openModal)
     }
 
     render();
@@ -161,7 +161,10 @@ async function initGestion() {
     get('#f-max').value = game?.nbJoueurMax ?? '';
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
-    if (tsTypes) tsTypes.setValue(game?.type || []);
+    // Initialiser Tom Select avec les types uniques
+    const types = Array.from(new Set(games.flatMap(g => g.type || [])))
+      .sort((a, b) => a.localeCompare(b));
+    initTomSelect(types, game?.type || []);
     get('#f-remarque').value = game?.remarque || '';
     const lienInput = get('#f-lien');
     const lienPreview = get('#f-lien-preview');

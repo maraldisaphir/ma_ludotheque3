@@ -75,6 +75,10 @@ async function initGestion() {
       if (el.type !== "file") el.disabled = readonly;
     });
     modal.querySelector('#btn-save').style.display = readonly ? 'none' : 'inline-flex';
+  if (tsTypes) {
+    tsTypes.setTextboxValue('');
+    tsTypes.control_input.disabled = readonly;
+  }
     modal.querySelector('#btn-delete').style.display = readonly ? 'none' : 'inline-flex';
   }
 

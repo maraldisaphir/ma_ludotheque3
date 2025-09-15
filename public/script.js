@@ -161,7 +161,7 @@ async function initGestion() {
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
     const types = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a,b)=>a.localeCompare(b));
-    initTomSelect(types, game?.type || []);
+    setTimeout(() => initTomSelect(types, game?.type || []), 0);
     get('#f-remarque').value = game?.remarque || '';
     const lienInput = get('#f-lien');
     const lienPreview = get('#f-lien-preview');

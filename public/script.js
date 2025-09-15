@@ -55,13 +55,6 @@ function initTomSelect(knownTypes, selected = []) {
     plugins: ['remove_button'],
     maxItems: null,
   });
-})),
-    items: selected,
-    create: true,
-    persist: false,
-    plugins: ['remove_button'],
-    maxItems: null,
-  });
 }
 
 // --- Gestion Page Logic ---

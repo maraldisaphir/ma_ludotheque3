@@ -57,6 +57,29 @@ function initTomSelect(knownTypes, selected = []) {
   });
 }
 
+
+// Couleurs fixes par type (ajoute ici tes types si besoin)
+const typeColors = {
+  "Ambiance": "#ffd6e0",
+  "Stratégie": "#d6eaff",
+  "Classiques": "#e0ffd6",
+  "Bluff": "#fff3d6",
+  "Cartes": "#e6d6ff"
+};
+
+// Appliquer la couleur fixe aux badges Tom Select
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMNodeInserted', (e) => {
+    if (e.target.classList && e.target.classList.contains('item')) {
+      const val = e.target.getAttribute('data-value');
+      if (val) {
+        const color = typeColors[val] || '#f0f0f0';
+        e.target.style.backgroundColor = color;
+      }
+    }
+  });
+});
+
 // --- Gestion Page Logic ---
 async function initGestion() {
   const listEl = document.querySelector('#games-list');

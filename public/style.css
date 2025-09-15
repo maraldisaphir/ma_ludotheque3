@@ -279,3 +279,31 @@ a:hover { text-decoration: underline; }
   .tag { font-size: 15px; padding: 6px 12px; }
   .tag-add { font-size: 15px; }
 }
+
+
+/* --- Tom Select custom styles --- */
+.ts-wrapper {
+  min-height: 38px;
+  width: 100%;
+  border: 1px solid #d0d0ff;
+  border-radius: 8px;
+  padding: 4px 6px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.ts-control {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+/* Badges pastel fixes */
+.ts-wrapper .item {
+  border-radius: 12px;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}

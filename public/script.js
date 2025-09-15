@@ -71,7 +71,7 @@ async function initGestion() {
   const state = { editingId: null };
 
   function setReadOnly(modal, readonly = true) {
-    modal.querySelectorAll('input, textarea').forEach(el => {
+    modal.querySelectorAll('input, textarea, select').forEach(el => {
       if (el.type !== "file") el.disabled = readonly;
     });
     modal.querySelector('#btn-save').style.display = readonly ? 'none' : 'inline-flex';

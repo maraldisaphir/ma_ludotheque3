@@ -59,6 +59,9 @@ function initTomSelect(knownTypes, selected = []) {
 
 
 // Couleurs fixes par type (ajoute ici tes types si besoin)
+
+
+// Couleurs fixes par type
 const typeColors = {
   "Ambiance": "#ffd6e0",
   "Stratégie": "#d6eaff",
@@ -67,17 +70,24 @@ const typeColors = {
   "Cartes": "#e6d6ff"
 };
 
-// Appliquer la couleur fixe aux badges Tom Select
-document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('DOMNodeInserted', (e) => {
-    if (e.target.classList && e.target.classList.contains('item')) {
-      const val = e.target.getAttribute('data-value');
-      if (val) {
-        const color = typeColors[val] || '#f0f0f0';
-        e.target.style.backgroundColor = color;
+// MutationObserver pour colorer les badges Tom Select
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach(m => {
+    m.addedNodes.forEach(node => {
+      if (node.nodeType === 1 && node.classList.contains("item")) {
+        const val = node.getAttribute("data-value");
+        if (val) {
+          const color = typeColors[val] || "#f0f0f0";
+          node.style.backgroundColor = color;
+        }
       }
-    }
+    });
   });
+});
+
+// Activer l'observer une fois le DOM prêt
+document.addEventListener("DOMContentLoaded", () => {
+  observer.observe(document.body, { childList: true, subtree: true });
 });
 
 // --- Gestion Page Logic ---

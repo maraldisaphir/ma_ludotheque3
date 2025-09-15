@@ -307,3 +307,40 @@ a:hover { text-decoration: underline; }
   font-weight: 500;
   color: #333;
 }
+
+
+/* --- Tom Select Styling --- */
+.ts-wrapper {
+  width: 100% !important;
+  min-height: 38px;
+  border: 1px solid #d0d0ff;
+  border-radius: 8px;
+  background: #fff;
+  padding: 2px 4px;
+  font-size: 14px;
+}
+
+.ts-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+}
+
+.ts-control .item {
+  background: #e6f0ff;
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.ts-control input {
+  min-width: 120px;
+  border: none !important;
+  outline: none !important;
+  padding: 4px;
+  font-size: 14px;
+}

@@ -48,6 +48,7 @@ function initTomSelect(knownTypes, selected = []) {
 
   if (tsTypes) tsTypes.destroy();
   tsTypes = new TomSelect(el, {
+    placeholder: 'Choisir ou saisir...',
     options: knownTypes.map(t => ({ value: t, text: t })),
     items: selected,
     create: true,

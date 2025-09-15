@@ -344,3 +344,22 @@ a:hover { text-decoration: underline; }
   padding: 4px;
   font-size: 14px;
 }
+
+
+/* --- Fix Tom Select Height --- */
+#f-types + .ts-wrapper {
+  min-height: 42px !important;
+  display: block !important;
+}
+
+.ts-control {
+  min-height: 38px !important;
+  padding: 6px !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ts-control input {
+  min-height: 24px !important;
+}

@@ -84,6 +84,10 @@ async function initGestion() {
       const types = Array.from(new Set(games.flatMap(g => g.type || [])))
         .sort((a, b) => a.localeCompare(b));
       filterType.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
+      const typeDatalist = document.querySelector('#types-list');
+      if (typeDatalist) {
+        typeDatalist.innerHTML = types.map(t => `<option value="${t}">`).join('');
+      }
     }
 
     render();
@@ -219,7 +223,7 @@ async function initGestion() {
       nbJoueurMax: parseInt(get('#f-max').value || '0', 10) || null,
       age: parseInt(get('#f-age').value || '0', 10) || null,
       duree: parseInt(get('#f-duree').value || '0', 10) || null,
-      type: get('#f-types').value.split(',').map(s => s.trim()).filter(Boolean),
+      type: get('#f-types').value.split(',').map(s => s.trim()).filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()),
       remarque: get('#f-remarque').value.trim(),
       photo: photoDataUrl || '',
       lien: get('#f-lien').value.trim(),

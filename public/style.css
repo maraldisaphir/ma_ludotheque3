@@ -237,3 +237,49 @@ a:hover { text-decoration: underline; }
   display: flex;
   gap: 12px;
 }
+
+
+/* --- TagsInput --- */
+.tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(124,58,237,.25);
+  border-radius: 12px;
+  background: var(--card);
+  cursor: text;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(124,58,237,.18);
+  color: var(--fg);
+  font-size: 13px;
+  gap: 6px;
+}
+
+.tag button {
+  all: unset;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--accent2);
+}
+
+.tag-add {
+  background: transparent;
+  border: 1px dashed rgba(124,58,237,.4);
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .tags-input { padding: 10px; }
+  .tag { font-size: 15px; padding: 6px 12px; }
+  .tag-add { font-size: 15px; }
+}

@@ -83,8 +83,7 @@ class TagsInput {
     this.container.appendChild(addBtn);
   }
   openSelector() {
-    const choix = prompt("Tape un type existant ou nouveau :
-" + this.knownTypes.join(', '));
+    const choix = prompt("Tape un type existant ou nouveau : " + this.knownTypes.join(", "));
     if (choix) this.add(choix.trim());
   }
   updateKnownTypes(types) {

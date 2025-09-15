@@ -40,7 +40,7 @@ function download(filename, text) {
 }
 
 // --- TagsInput component ---
-// --- Tom Select init ---
+// --- Tom Select ---
 let tsTypes;
 function initTomSelect(knownTypes, selected=[]) {
   if (tsTypes) tsTypes.destroy();
@@ -53,7 +53,6 @@ function initTomSelect(knownTypes, selected=[]) {
     maxItems: null,
   });
 }
-
 
 // --- Gestion Page Logic ---
 async function initGestion() {
@@ -101,7 +100,7 @@ async function initGestion() {
       const types = Array.from(new Set(games.flatMap(g => g.type || [])))
         .sort((a, b) => a.localeCompare(b));
       filterType.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
-      // initTomSelect removed from load
+      // Tom Select sera initialisé dans openModal
     }
 
     render();
@@ -161,9 +160,7 @@ async function initGestion() {
     get('#f-max').value = game?.nbJoueurMax ?? '';
     get('#f-age').value = game?.age ?? '';
     get('#f-duree').value = game?.duree ?? '';
-    // Initialiser Tom Select avec les types uniques
-    const types = Array.from(new Set(games.flatMap(g => g.type || [])))
-      .sort((a, b) => a.localeCompare(b));
+    const types = Array.from(new Set(games.flatMap(g => g.type || []))).sort((a,b)=>a.localeCompare(b));
     initTomSelect(types, game?.type || []);
     get('#f-remarque').value = game?.remarque || '';
     const lienInput = get('#f-lien');
@@ -240,7 +237,7 @@ async function initGestion() {
       nbJoueurMax: parseInt(get('#f-max').value || '0', 10) || null,
       age: parseInt(get('#f-age').value || '0', 10) || null,
       duree: parseInt(get('#f-duree').value || '0', 10) || null,
-      type: tsTypes ? tsTypes.getValue() : [], // récupération via Tom Select
+      type: tsTypes ? tsTypes.getValue() : [],
       remarque: get('#f-remarque').value.trim(),
       photo: photoDataUrl || '',
       lien: get('#f-lien').value.trim(),
